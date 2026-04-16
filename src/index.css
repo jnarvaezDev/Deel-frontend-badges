@@ -1,0 +1,153 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@font-face {
+  font-family: 'Bagoss Condensed';
+  src: url('/fonts/BagossCondensed-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 6.7%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 6.7%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 6.7%;
+
+    --primary: 0 0% 10.6%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 6.7%;
+
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 10.6%;
+
+    --accent: 0 0% 10.6%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 10.6%;
+
+    --radius: 16px;
+
+    /* Deel brand tokens */
+    --deel-purple: 256 56% 40%;
+    --deel-light-purple: 258 92% 80%;
+    --deel-yellow: 47 100% 49.4%;
+    --deel-light-blue: 213 95% 82%;
+    --deel-dark-blue: 218 90% 29%;
+    --deel-black: 0 0% 6.7%;
+    --deel-white: 0 0% 100%;
+    --deel-gray-bg: 0 0% 96.1%;
+    --deel-border: 0 0% 89.8%;
+
+    --shadow-soft: 0 4px 20px rgba(0,0,0,0.05);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Bagoss Condensed', sans-serif;
+    font-weight: 500;
+  }
+
+  button, a, [role="button"] {
+    font-family: 'Bagoss Condensed', sans-serif;
+  }
+}
+
+@layer utilities {
+  .deel-container {
+    @apply mx-auto w-full;
+    max-width: 1200px;
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+
+  @media (max-width: 1024px) {
+    .deel-container {
+      padding-left: 32px;
+      padding-right: 32px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .deel-container {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+  }
+
+  .section-spacing {
+    padding-top: 96px;
+    padding-bottom: 96px;
+  }
+
+  @media (max-width: 1024px) {
+    .section-spacing {
+      padding-top: 72px;
+      padding-bottom: 72px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .section-spacing {
+      padding-top: 56px;
+      padding-bottom: 56px;
+    }
+  }
+
+  .highlight-label {
+    background-color: hsl(var(--deel-yellow));
+    display: inline;
+    padding: 4px 10px;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 1.2em;
+  }
+  }
+
+  .scroll-hidden {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+  }
+
+  .scroll-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scroll-hidden-child > * {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  }
+
+  .scroll-visible-child > * {
+    opacity: 1;
+    transform: translateY(0);
+  }
