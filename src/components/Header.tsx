@@ -3,7 +3,7 @@ import deelLogo from "@/assets/deel-logo.svg";
 const Header = () => {
 
   const handleLogin = () => {
-    window.location.href = "http://localhost:3000/auth/linkedin";
+    window.location.href = `${import.meta.env.VITE_LINKEDIN_URI}`;
   };
 
   return (
