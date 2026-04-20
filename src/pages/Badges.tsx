@@ -115,7 +115,7 @@ const Badges = () => {
                   <Button
                     asChild
                     size="lg"
-                    className={cn("flex-1 gap-2 h-12", meta.gradientClass, "text-white border-0 hover:opacity-90 w-full")}
+                    className={cn("flex-2 gap-2 h-12", meta.gradientClass, "text-white border-0 hover:opacity-90 w-full")}
                   >
                     <a href={badge.vb_validation_url} target="_blank" rel="noopener noreferrer">
                       <ExternalLink className="h-4 w-4" />

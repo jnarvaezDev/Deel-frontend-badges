@@ -20,6 +20,8 @@ interface ClosingScreensProps {
 export function ClosingScreen(props: ClosingScreensProps) {
   const { step, openText, setOpenText, honesty, setHonesty, intent, setIntent, onContinue } = props;
 
+  const [isClicked, setIsClicked] = useState(false);
+
   if (step === "open_text") {
     return (
       <div className="space-y-6 animate-fade-in">
@@ -143,7 +145,7 @@ export function ClosingScreen(props: ClosingScreensProps) {
           );
         })}
       </div>
-      <ContinueButton disabled={false} onClick={onContinue} label="See my badge" />
+      <ContinueButton disabled={isClicked} onClick={() => { onContinue(); setIsClicked(true); }} label={isClicked ? "Loading..." : "See my badge"}  />
     </div>
   );
 }
