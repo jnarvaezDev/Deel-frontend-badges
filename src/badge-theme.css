@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Deel Global Badges Design System
+   All colors MUST be HSL.
+   Brand: Navy #0A1628, Primary Blue #0073FF
+   Badges: Talent #00C2A8 (teal), Champion #0073FF (blue), Leader #7B2FBE (purple)
+*/
+
+@layer base {
+  :root {
+    --background: 210 40% 99%;
+    --foreground: 215 60% 9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 60% 9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 60% 9%;
+
+    /* Deel navy */
+    --navy: 215 60% 9%;
+    --navy-foreground: 0 0% 100%;
+
+    /* Deel primary blue */
+    --primary: 213 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 213 100% 45%;
+    --primary-soft: 213 100% 96%;
+
+    --secondary: 215 25% 96%;
+    --secondary-foreground: 215 60% 9%;
+
+    --muted: 215 25% 96%;
+    --muted-foreground: 215 15% 45%;
+
+    --accent: 213 100% 96%;
+    --accent-foreground: 213 100% 35%;
+
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 215 25% 90%;
+    --input: 215 25% 88%;
+    --ring: 213 100% 50%;
+
+    --radius: 0.875rem;
+
+    /* Badge level colors */
+    --talent: 256.58deg 76% 80.39%;
+    --talent-foreground: 0 0% 100%;
+    --talent-soft: 173 70% 95%;
+
+    --champion: 213 100% 50%;
+    --champion-foreground: 0 0% 100%;
+    --champion-soft: 213 100% 96%;
+
+    --leader: 273 60% 47%;
+    --leader-foreground: 0 0% 100%;
+    --leader-soft: 273 60% 96%;
+
+    /* Gradients */
+    --gradient-talent: linear-gradient(135deg, hsl(255.62deg 82.02% 82.55%), hsl(277.7deg 59.2% 49.02% / 83%));
+    --gradient-champion: linear-gradient(135deg, hsl(213 100% 55%), hsl(220 95% 48%));
+    --gradient-leader: linear-gradient(135deg, hsl(273 60% 52%), hsl(285 65% 45%));
+    --gradient-hero: linear-gradient(160deg, hsl(215 60% 9%) 0%, hsl(218 55% 15%) 100%);
+
+    /* Shadows */
+    --shadow-card: 0 1px 2px hsl(215 30% 15% / 0.04), 0 4px 16px hsl(215 30% 15% / 0.06);
+    --shadow-elevated: 0 8px 32px hsl(215 30% 15% / 0.10);
+    --shadow-badge: 0 12px 40px hsl(var(--primary) / 0.25);
+    --shadow-badge-talent: 0 12px 40px hsl(var(--talent) / 0.30);
+    --shadow-badge-leader: 0 12px 40px hsl(var(--leader) / 0.30);
+
+    /* Transitions */
+    --ease-smooth: cubic-bezier(0.32, 0.72, 0, 1);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 215 60% 7%;
+    --foreground: 210 40% 98%;
+    --card: 215 55% 10%;
+    --card-foreground: 210 40% 98%;
+    --popover: 215 55% 10%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 213 100% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 215 40% 15%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 215 40% 15%;
+    --muted-foreground: 215 15% 65%;
+    --accent: 215 40% 15%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 45%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 215 40% 18%;
+    --input: 215 40% 18%;
+    --ring: 213 100% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+@layer utilities {
+  .bg-navy { background-color: hsl(var(--navy)); }
+  .text-navy { color: hsl(var(--navy)); }
+  .bg-gradient-hero { background: var(--gradient-hero); }
+  .bg-gradient-talent { background: var(--gradient-talent); }
+  .bg-gradient-champion { background: var(--gradient-champion); }
+  .bg-gradient-leader { background: var(--gradient-leader); }
+  .shadow-card { box-shadow: var(--shadow-card); }
+  .shadow-elevated { box-shadow: var(--shadow-elevated); }
+  .shadow-badge { box-shadow: var(--shadow-badge); }
+  .shadow-badge-talent { box-shadow: var(--shadow-badge-talent); }
+  .shadow-badge-leader { box-shadow: var(--shadow-badge-leader); }
+  .ease-smooth { transition-timing-function: var(--ease-smooth); }
+}

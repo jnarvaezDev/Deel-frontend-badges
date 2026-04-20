@@ -5,8 +5,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
-import AppFlow from "./pages/AppFlow";
+import AppFlow from "./pages/AppFlow.tsx";
 import VerifyPage from "./pages/VerifyPage";
+import Badges from "./pages/Badges.tsx";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/app" element={<AppFlow />} />
+          <Route path="/badges" element={<Badges />} />
           <Route path="/verify/:id" element={<VerifyPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

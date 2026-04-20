@@ -60,6 +60,22 @@
 }
 
 @layer base {
+  .bdg-theme {
+    --bdg-background: 210 40% 99%;
+    --bdg-foreground: 215 60% 9%;
+    --bdg-border: 215 25% 90%;
+    --bdg-muted-foreground: 215 15% 45%;
+    --bdg-talent: 173 100% 38%;
+    --bdg-champion: 213 100% 50%;
+    --bdg-leader: 273 60% 47%;
+    --bdg-primary: 213 100% 50%;
+    --bdg-primary-soft: 213 100% 96%;
+    --bdg-minprimary :206.67deg 100% 75.41%;
+
+  }
+}
+
+@layer base {
   * {
     @apply border-border;
   }

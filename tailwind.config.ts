@@ -14,6 +14,16 @@ export default {
     },
     extend: {
       colors: {
+        "bdg-background": "hsl(var(--bdg-background))",
+        "bdg-foreground": "hsl(var(--bdg-foreground))",
+        "bdg-border": "hsl(var(--bdg-border))",
+        "bdg-muted-foreground": "hsl(var(--bdg-muted-foreground))",
+        "bdg-talent": "hsl(var(--bdg-talent))",
+        "bdg-champion": "hsl(var(--bdg-champion))",
+        "bdg-leader": "hsl(var(--bdg-leader))",
+        "bdg-primary": "hsl(var(--bdg-primary))",
+        "bdg-minprimary": "hsl(var(--bdg-minprimary))",
+        "bdg-primary-soft": "hsl(var(--bdg-primary-soft))",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -56,6 +66,21 @@ export default {
           black: "hsl(var(--deel-black))",
           "gray-bg": "hsl(var(--deel-gray-bg))",
           border: "hsl(var(--deel-border))",
+        },
+        talent: {
+          DEFAULT: "hsl(var(--talent))",
+          foreground: "hsl(var(--talent-foreground))",
+          soft: "hsl(var(--talent-soft))",
+        },
+        champion: {
+          DEFAULT: "hsl(var(--champion))",
+          foreground: "hsl(var(--champion-foreground))",
+          soft: "hsl(var(--champion-soft))",
+        },
+        leader: {
+          DEFAULT: "hsl(var(--leader))",
+          foreground: "hsl(var(--leader-foreground))",
+          soft: "hsl(var(--leader-soft))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
