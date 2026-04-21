@@ -11,6 +11,7 @@ interface ResultsScreenProps {
 }
 
 export function ResultsScreen({ result, onRestart }: ResultsScreenProps) {
+console.log('result',result);
 
   if (result.badge === "none") {
     return (
