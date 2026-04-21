@@ -4,6 +4,10 @@ import ctaImage from "@/assets/cta-image.png";
 const CtaSection = () => {
   const content = useScrollReveal();
 
+  const handleLogin = () => {
+    window.location.href = `${import.meta.env.VITE_LINKEDIN_URI}`;
+  };
+
   return (
     <section className="section-spacing">
       <div className="deel-container">
@@ -21,6 +25,7 @@ const CtaSection = () => {
               Get your certification and add your badge to LinkedIn.
             </p>
             <button
+              onClick={handleLogin}
               className="mt-5 h-[44px] px-7 rounded-full font-semibold text-sm transition-opacity hover:opacity-90 self-start"
               style={{ backgroundColor: "#fcc400", color: "#111111" }}
             >

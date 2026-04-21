@@ -9,6 +9,13 @@ const HeroSection = () => {
     window.location.href = `${import.meta.env.VITE_LINKEDIN_URI}`;
   };
 
+  const handleScroll = () => {
+  const section = document.getElementById("certification-levels");
+  if (section) {
+    section.scrollIntoView({ behavior: "smooth" });
+  }
+};
+
   return (
     <section className="section-spacing">
       <div className="deel-container">
@@ -32,9 +39,13 @@ const HeroSection = () => {
                 className="h-[48px] px-6 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-opacity w-full sm:w-auto">
                 GET YOUR BADGE
               </button>
-              <button className="h-[48px] px-6 rounded-full border border-deel-border bg-background text-foreground font-semibold text-sm hover:bg-muted transition-colors w-full sm:w-auto">
+              
+              <button 
+              onClick={handleScroll} 
+              className="h-[48px] px-6 rounded-full border border-deel-border bg-background text-foreground font-semibold text-sm hover:bg-muted transition-colors w-full sm:w-auto">
                 SEE CERTIFICATION LEVELS
               </button>
+              
             </div>
           </div>
 

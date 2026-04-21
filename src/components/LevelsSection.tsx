@@ -29,7 +29,7 @@ const LevelsSection = () => {
 
   return (
     <section className="bg-deel-gray-bg section-spacing">
-      <div className="deel-container">
+      <div className="deel-container" id="certification-levels">
         <div
           ref={grid.ref}
           className={`grid grid-cols-1 md:grid-cols-3 gap-6 scroll-hidden-child ${grid.isVisible ? 'scroll-visible-child' : ''}`}
