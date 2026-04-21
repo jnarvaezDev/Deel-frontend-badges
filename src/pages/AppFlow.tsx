@@ -36,6 +36,12 @@ const PATH_ACCENT: Record<PathKey, Exclude<BadgeLevel, "none">> = {
   C: "leader",
 };
 
+const ACCENT_BG = {
+  talent: "bg-talent",
+  champion: "bg-champion",
+  leader: "bg-leader",
+};
+
 const AppFlow = () => {
   const isMobile = useIsMobile();
   const [stage, setStage] = useState<Stage>("welcome");
@@ -218,7 +224,7 @@ const AppFlow = () => {
   return (
     <div className="bdg-theme min-h-screen bg-bdg-background flex flex-col">
       <Header />
-      <div style={{ backgroundColor: "#1a1145", height: 220 }} />
+      <div className={ACCENT_BG[accent]} style={{ height: 220 }} />
       <main className="flex-1 container max-w-2xl py-6 sm:py-10 px-4 sm:px-6">
         <div
           className="deel-container flex justify-center"

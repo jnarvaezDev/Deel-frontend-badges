@@ -48,15 +48,15 @@
     --radius: 0.875rem;
 
     /* Badge level colors */
-    --talent: 256.58deg 76% 80.39%;
+    --talent: 255.83deg 85.71% 83.53%;
     --talent-foreground: 0 0% 100%;
     --talent-soft: 173 70% 95%;
 
-    --champion: 213 100% 50%;
+    --champion: 208.8deg 92.59% 84.12%;
     --champion-foreground: 0 0% 100%;
     --champion-soft: 213 100% 96%;
 
-    --leader: 273 60% 47%;
+    --leader: 255.59deg 53.14% 46.86%;
     --leader-foreground: 0 0% 100%;
     --leader-soft: 273 60% 96%;
 
