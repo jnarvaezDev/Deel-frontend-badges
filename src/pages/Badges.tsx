@@ -80,7 +80,7 @@ const Badges = () => {
       {/* Top dark section */}
       <div style={{ backgroundColor: "#1a1145", height: 220 }} />
 
-      <div className="flex justify-center">
+      <div className="flex justify-center min-h-screen">
         <div
           className="grid gap-6"
           style={{
@@ -128,7 +128,7 @@ const Badges = () => {
           })}
         </div>
       </div >
-      <div style={{ height: 260 }} />
+    
       <Footer />
     </div >
   );
