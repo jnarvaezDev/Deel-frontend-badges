@@ -180,6 +180,7 @@ const AppFlow = () => {
         maxScore: r.maxScore,
         reason: r.reason,
         score: r.score,
+        answers:answers
       };
 
       try {
