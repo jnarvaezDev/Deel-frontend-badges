@@ -1,21 +1,32 @@
-import { useEffect, useMemo, useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import deelLogo from "@/assets/deel-logo.svg";
-import { BadgeMedal } from "../components/badges/BadgeMedal";
-import badgeTalent from "@/assets/badge-talent.png";
-import badgeChampion from "@/assets/badge-champion.png";
-import badgeLeader from "@/assets/badge-leader.png";
-import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ExternalLink, Award, Loader2, AlertCircle, Inbox } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { BADGE_META } from "@/lib/badges/results";
-import { ExternalLink } from "lucide-react";
+import { BadgeMedal } from "../components/badges/BadgeMedal";
 
-const tierDisplayMap: Record<string, string> = {
-  "Global Talent": badgeTalent,
-  "Global Champion": badgeChampion,
-  "Global Leader": badgeLeader,
+interface BadgeRecord {
+  id: number;
+  name: string;
+  email: string;
+  score: number;
+  tier: string;
+  vb_validation_url: string;
+  created_at: string;
+}
+
+interface BadgesResponse {
+  count: number;
+  data: BadgeRecord[];
+}
+
+const TIER_STYLES: Record<string, { bg: string; text: string; gradient: string }> = {
+  "Global Talent": { bg: "bg-talent/10", text: "text-talent", gradient: "bg-gradient-talent" },
+  "Global Champion": { bg: "bg-champion/10", text: "text-champion", gradient: "bg-gradient-champion" },
+  "Global Leader": { bg: "bg-leader/10", text: "text-leader", gradient: "bg-gradient-leader" },
 };
 
 const tierDisplayMapMeta = {
@@ -24,114 +35,156 @@ const tierDisplayMapMeta = {
   "Global Leader": "leader",
 } as const;
 
-const Badges = () => {
+function getTierStyle(tier: string) {
+  return TIER_STYLES[tier] ?? { bg: "bg-primary/10", text: "text-primary", gradient: "bg-primary" };
+}
 
-  const [user, setUser] = useState<{
-    email: string | null;
-  } | null>(null);
+export default function Badges() {
+  const [email, setEmail] = useState(() => localStorage.getItem("user_email") ?? "");
+  const [emailInput, setEmailInput] = useState("");
+  const [badges, setBadges] = useState<BadgeRecord[] | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const API_URL = import.meta.env.VITE_API_URL;
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-
-    const email = params.get("email");
-
-    setUser({
-      email: email ? decodeURIComponent(email) : null,
-    });
+  const fetchBadges = useCallback(async (userEmail: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/results/badges?email=${encodeURIComponent(userEmail)}`
+      );
+      if (!res.ok) throw new Error("Failed to fetch badges");
+      const json: BadgesResponse = await res.json();
+      setBadges(json.data);
+    } catch (e: any) {
+      setError(e.message ?? "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
-    if (!user) return;
+    if (email) fetchBadges(email);
+  }, [email, fetchBadges]);
 
-    if (!user.email) {
-      toast.error("Please reconnect with LinkedIn to continue");
-    }
-  }, [user]);
-
-
-  const [badges, setBadges] = useState([]);
-
-  useEffect(() => {
-    if (!user) return;
-
-    const fetchBadges = async () => {
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/results/badges?email=${user.email}`
-        );
-
-        const data = await res.json();
-        setBadges(data.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    fetchBadges();
-  }, [user]);
-
+  const handleEmailSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = emailInput.trim();
+    if (!trimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) return;
+    localStorage.setItem("user_email", trimmed);
+    setEmail(trimmed);
+  };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen bg-background">
       <Header />
-
-      {/* Top dark section */}
       <div style={{ backgroundColor: "#1a1145", height: 220 }} />
 
-      <div className="flex justify-center min-h-screen">
-        <div
-          className="grid gap-6"
-          style={{
-            justifyContent: "center", marginTop: -140
-          }}
-        >
-          {badges.map((badge: any) => {
-            const meta = BADGE_META[tierDisplayMapMeta[badge.tier]];
-
-            return (
-              <div
-                key={badge.id}
-                className="bg-background rounded-xl mb-10 p-6 shadow flex flex-col items-center text-center w-[450px]"
-              >
-
-                {/* Hero */}
-                <div className="flex flex-col items-center text-center gap-6 pt-4">
-                  <BadgeMedal level={tierDisplayMapMeta[badge.tier]} size="lg" />
-                  <div className="space-y-3 pt-4">
-                    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Deel Global Badge</p>
-                    <h1 className={cn("text-3xl sm:text-4xl font-bold tracking-tight text-navy")}>
-                      {meta.tagline}
-                    </h1>
-                    <p className="text-muted-foreground text-base sm:text-lg leading-relaxed max-w-xl">
-                      {meta.description}
-                    </p>
-                  </div>
-                </div>
-
-                {/* CTAs */}
-                <div className="flex flex-col sm:flex-row gap-3 pt-2 w-full">
-                  <Button
-                    asChild
-                    size="lg"
-                    className={cn("flex-2 gap-2 h-12", meta.gradientClass, "text-white border-0 hover:opacity-90 w-full")}
-                  >
-                    <a href={badge.vb_validation_url} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="h-4 w-4" />
-                      View Badge
-                    </a>
-                  </Button>
-                </div>
-              </div>
-            );
-          })}
+      <main className="container max-w-3xl py-8 px-4 space-y-6 min-h-screen" style={{
+            marginTop: -140
+          }}>
+        <div className="space-y-1">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">My Badges</h1>
+          <p className="text-white text-sm">View your earned Deel Global Badges.</p>
         </div>
-      </div >
-    
-      <Footer />
-    </div >
-  );
-};
 
-export default Badges;
+        {!email ? (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Enter your email to view badges</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleEmailSubmit} className="flex flex-col sm:flex-row gap-3">
+                <Input
+                  type="email"
+                  placeholder="you@example.com"
+                  value={emailInput}
+                  onChange={(e) => setEmailInput(e.target.value)}
+                  required
+                  className="flex-1"
+                />
+                <Button type="submit">View Badges</Button>
+              </form>
+            </CardContent>
+          </Card>
+        ) : loading ? (
+          <div className="flex flex-col items-center justify-center py-16 gap-3 text-muted-foreground">
+            <Loader2 className="h-8 w-8 animate-spin" />
+            <p className="text-sm">Loading your badges…</p>
+          </div>
+        ) : error ? (
+          <div className="flex flex-col items-center justify-center py-16 gap-3 text-destructive">
+            <AlertCircle className="h-8 w-8" />
+            <p className="text-sm">{error}</p>
+            <Button variant="outline" size="sm" onClick={() => fetchBadges(email)}>
+              Retry
+            </Button>
+          </div>
+        ) : badges && badges.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 gap-3 text-muted-foreground">
+            <Inbox className="h-8 w-8" />
+            <p className="text-sm">No badges found for <strong>{email}</strong>.</p>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                localStorage.removeItem("user_email");
+                setEmail("");
+                setBadges(null);
+              }}
+            >
+              Try another email
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {badges?.map((b) => {
+              const style = getTierStyle(b.tier);
+              return (
+                <Card key={b.id} className="overflow-hidden">
+                  <CardContent className="p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center gap-4">
+                    <div className={cn("w-[150px] h-[150px] rounded-xl flex items-center justify-center flex-shrink-0", style.gradient)}>
+                      <BadgeMedal level={tierDisplayMapMeta[b.tier]} size="md"  />
+                    </div>
+                    <div className="flex-1 space-y-1.5">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="font-semibold text-navy">{b.name}</h3>
+                        <span className={cn("px-2.5 py-0.5 rounded-full text-xs font-semibold", style.bg, style.text)}>
+                          {b.tier}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                        <span>Score: {b.score}</span>
+                        <span>·</span>
+                        <span>{new Date(b.created_at).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}</span>
+                      </div>
+                    </div>
+                    <Button asChild size="sm" className={cn("gap-1.5", style.gradient, "text-white border-0 hover:opacity-90")}>
+                      <a href={b.vb_validation_url} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="h-3.5 w-3.5" />
+                        View Badge
+                      </a>
+                    </Button>
+                  </CardContent>
+                </Card>
+              );
+            })}
+            <div className="text-center pt-2">
+              <button
+                onClick={() => {
+                  localStorage.removeItem("user_email");
+                  setEmail("");
+                  setBadges(null);
+                }}
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Switch email
+              </button>
+            </div>
+          </div>
+        )}
+      </main>
+      <Footer />
+    </div>
+  );
+}

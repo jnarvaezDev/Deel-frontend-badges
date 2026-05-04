@@ -21,6 +21,10 @@ export interface ScoringResult {
   reason: string;
   reroutedFrom?: PathKey;
   credentialUrl?: string;
+  validation_page_url?: string;
+  identification_number?: string;
+  tier?: string;
+  id?: number;
 }
 
 export interface Intent {
@@ -34,6 +38,8 @@ export interface backendResponse {
   tier: string;
   credentialUrl: string;
   issuedBy: string;
+  validation_page_url?: string;
+  identification_number?: string;
 }
 
 export interface SubmissionPayload {

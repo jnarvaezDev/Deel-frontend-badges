@@ -11,7 +11,7 @@ interface ResultsScreenProps {
 }
 
 export function ResultsScreen({ result, onRestart }: ResultsScreenProps) {
-console.log('result',result);
+
 
   if (result.badge === "none") {
     return (
@@ -102,6 +102,7 @@ console.log('result',result);
         </Button>
       </div>
       
+
 
       {/* Upgrade path */}
       <div className="rounded-2xl border border-border bg-card p-5 sm:p-6 space-y-4">

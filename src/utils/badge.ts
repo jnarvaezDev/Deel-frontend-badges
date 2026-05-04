@@ -1,11 +1,11 @@
 export const generateLinkedInUrl = ({
   tier,
-  score,
   id,
+  url
 }: {
   tier: string;
-  score: number;
-  id: number;
+  id: string;
+  url: string;
 }) => {
   const baseUrl =
     "https://www.linkedin.com/profile/add?startTask=CERTIFICATION_NAME";
@@ -17,8 +17,8 @@ export const generateLinkedInUrl = ({
     organizationName: "Deel",
     issueYear: new Date().getFullYear().toString(),
     issueMonth: (new Date().getMonth() + 1).toString(),
-    credentialUrl: `${APP_URL}/verify/${id}`,
-    credentialId: id.toString()
+    credentialUrl: `${url}`,
+    credentialId: id?.toString()
   });
 
   return `${baseUrl}&${params.toString()}`;

@@ -3,6 +3,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { WelcomeScreen } from "@/components/badges/WelcomeScreen";
+import { RegistrationScreen, type RegistrationData } from "@/components/badges/RegistrationScreen";
 import { QuestionScreen } from "@/components/badges/QuestionScreen";
 import { ClosingScreen } from "@/components/badges/ClosingScreen";
 import { ProcessingScreen } from "@/components/badges/ProcessingScreen";
@@ -20,6 +21,7 @@ import "./../badge-theme.css";
 
 type Stage =
   | "welcome"
+  | "registration"
   | "entry"
   | "questions"
   | "open_text"
@@ -45,6 +47,7 @@ const ACCENT_BG = {
 const AppFlow = () => {
   const isMobile = useIsMobile();
   const [stage, setStage] = useState<Stage>("welcome");
+  const [registration, setRegistration] = useState<RegistrationData | null>(null);
   const [path, setPath] = useState<PathKey | null>(null);
   const [entryAnswer, setEntryAnswer] = useState<string>("");
   const [questionIdx, setQuestionIdx] = useState(0);
@@ -65,40 +68,6 @@ const AppFlow = () => {
 
   const API_URL = import.meta.env.VITE_API_URL;
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-
-    const nameParam = params.get("name");
-    const emailParam = params.get("email");
-
-    const name =
-      nameParam ? decodeURIComponent(nameParam) : localStorage.getItem("user_name");
-
-    const email =
-      emailParam ? decodeURIComponent(emailParam) : localStorage.getItem("user_email");
-
-    if (emailParam) {
-      localStorage.setItem("user_email", decodeURIComponent(emailParam));
-    }
-
-    if (nameParam) {
-      localStorage.setItem("user_name", decodeURIComponent(nameParam));
-    }
-
-    setUser({
-      name,
-      email,
-    });
-  }, []);
-
-  useEffect(() => {
-    if (!user) return;
-
-    if (!user.email) {
-      toast.error("Please reconnect with LinkedIn to continue");
-    }
-  }, [user]);
-
   const questions = useMemo(() => (path ? getQuestionsForPath(path) : []), [path]);
 
   // Total dynamic steps for progress: entry + path questions + 3 closing
@@ -116,6 +85,7 @@ const AppFlow = () => {
 
   const reset = () => {
     setStage("welcome");
+    setRegistration(null);
     setPath(null);
     setEntryAnswer("");
     setQuestionIdx(0);
@@ -125,6 +95,19 @@ const AppFlow = () => {
     setIntent({ seekingOpportunities: false, hiringGlobalRoles: false, exploring: false });
     setResult(null);
   };
+
+  const handleRegistration = (data) => {
+
+    if (data?.email) {
+      localStorage.setItem("user_email", decodeURIComponent(data.email));
+    }
+
+    if (data?.fullName) {
+      localStorage.setItem("user_name", decodeURIComponent(data.fullName));
+    }
+
+    setRegistration(data);
+  }
 
   // ---------- Entry handling ----------
   const handleEntrySelect = (idx: number) => {
@@ -174,13 +157,15 @@ const AppFlow = () => {
       const r = scoreForPath(path, answers);
 
       const payload = {
-        name: user.name,
-        email: user.email,
+        name: registration?.fullName ?? "",
+        email: registration?.email ?? "",
+        jobTitle: registration?.jobTitle ?? "",
+        companyName: registration?.companyName ?? "",
         badge: r.badge,
         maxScore: r.maxScore,
         reason: r.reason,
         score: r.score,
-        answers:answers
+        answers: answers
       };
 
       try {
@@ -197,6 +182,9 @@ const AppFlow = () => {
         const finalResult: ScoringResult = {
           ...r,
           credentialUrl: data.credentialUrl,
+          validation_page_url: data.validation_page_url,
+          identification_number: data.identification_number,
+          tier: data.tier
         };
 
         setResult(finalResult);
@@ -231,67 +219,76 @@ const AppFlow = () => {
           className="deel-container flex justify-center"
           style={{ marginTop: -224 }}
         >
-          {user?.email && (
-            <div
-              className="bg-background rounded-[20px] shadow-[0_8px_40px_rgba(0,0,0,0.10)] w-full flex flex-col items-center"
-              style={{ padding: "48px 40px 56px" }}
-            >
 
-              {stage === "welcome" && <WelcomeScreen onStart={() => setStage("entry")} />}
+          <div
+            className="bg-background rounded-[20px] shadow-[0_8px_40px_rgba(0,0,0,0.10)] w-full flex flex-col items-center"
+            style={{ padding: "48px 40px 56px" }}
+          >
 
-              {stage === "entry" && (
-                <EntryScreen
-                  selectedLabel={entryAnswer}
-                  onSelect={handleEntrySelect}
-                  onContinue={handleEntryContinue}
-                  onBack={() => setStage("welcome")}
-                  currentStep={currentStep}
-                  totalSteps={totalSteps}
-                />
-              )}
+            {stage === "welcome" && <WelcomeScreen onStart={() => setStage("registration")} />}
 
-              {stage === "questions" && currentQuestion && (
-                <QuestionScreen
-                  question={currentQuestion}
-                  step={currentStep}
+            {stage === "registration" && (
+              <RegistrationScreen
+                onContinue={(data) => {
+                  handleRegistration(data);
+                  setStage("entry");
+                }}
+              />
+            )}
+
+            {stage === "entry" && (
+              <EntryScreen
+                selectedLabel={entryAnswer}
+                onSelect={handleEntrySelect}
+                onContinue={handleEntryContinue}
+                onBack={() => setStage("welcome")}
+                currentStep={currentStep}
+                totalSteps={totalSteps}
+              />
+            )}
+
+            {stage === "questions" && currentQuestion && (
+              <QuestionScreen
+                question={currentQuestion}
+                step={currentStep}
+                total={totalSteps}
+                selectedLabel={answers[currentQuestion.id]?.label}
+                onSelect={handleQuestionSelect}
+                onContinue={handleQuestionContinue}
+                onBack={handleQuestionBack}
+                accentLevel={accent}
+                autoAdvance={isMobile}
+              />
+            )}
+
+            {(stage === "open_text" || stage === "honesty" || stage === "intent") && (
+              <div className="space-y-8">
+                <ProgressBar
+                  current={currentStep}
                   total={totalSteps}
-                  selectedLabel={answers[currentQuestion.id]?.label}
-                  onSelect={handleQuestionSelect}
-                  onContinue={handleQuestionContinue}
-                  onBack={handleQuestionBack}
-                  accentLevel={accent}
-                  autoAdvance={isMobile}
+                  accentClass={
+                    accent === "talent" ? "bg-bdg-talent" :
+                      accent === "leader" ? "bg-bdg-leader" : "bg-bdg-champion"
+                  }
                 />
-              )}
+                <ClosingScreen
+                  step={stage}
+                  openText={openText}
+                  setOpenText={setOpenText}
+                  honesty={honesty}
+                  setHonesty={setHonesty}
+                  intent={intent}
+                  setIntent={setIntent}
+                  onContinue={handleClosingContinue}
+                />
+              </div>
+            )}
 
-              {(stage === "open_text" || stage === "honesty" || stage === "intent") && (
-                <div className="space-y-8">
-                  <ProgressBar
-                    current={currentStep}
-                    total={totalSteps}
-                    accentClass={
-                      accent === "talent" ? "bg-bdg-talent" :
-                        accent === "leader" ? "bg-bdg-leader" : "bg-bdg-champion"
-                    }
-                  />
-                  <ClosingScreen
-                    step={stage}
-                    openText={openText}
-                    setOpenText={setOpenText}
-                    honesty={honesty}
-                    setHonesty={setHonesty}
-                    intent={intent}
-                    setIntent={setIntent}
-                    onContinue={handleClosingContinue}
-                  />
-                </div>
-              )}
+            {stage === "processing" && <ProcessingScreen onDone={() => setStage("results")} />}
 
-              {stage === "processing" && <ProcessingScreen onDone={() => setStage("results")} />}
+            {stage === "results" && result && <ResultsScreen result={result} onRestart={reset} />}
+          </div>
 
-              {stage === "results" && result && <ResultsScreen result={result} onRestart={reset} />}
-            </div>
-          )}
         </div>
       </main>
 

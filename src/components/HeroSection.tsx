@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import heroImage from "@/assets/hero-image.gif";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 
@@ -5,17 +6,13 @@ const HeroSection = () => {
   const left = useScrollReveal();
   const right = useScrollReveal();
 
-  const handleLogin = () => {
-    window.location.href = `${import.meta.env.VITE_LINKEDIN_URI}`;
-  };
-
   const handleScroll = () => {
   const section = document.getElementById("certification-levels");
   if (section) {
     section.scrollIntoView({ behavior: "smooth" });
   }
 };
-
+//h-[48px] px-6 rounded-full border border-deel-border bg-primary .text-primary-foreground text-sm font-semibold hover:bg-muted transition-colors flex items-center
   return (
     <section className="section-spacing">
       <div className="deel-container">
@@ -34,11 +31,13 @@ const HeroSection = () => {
               From global potential to global leadership: find the badge that matches your experience.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-4">
-              <button 
-                onClick={handleLogin}
-                className="h-[48px] px-6 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-opacity w-full sm:w-auto">
+
+              <Link
+                to={`/app`}
+                className="h-[48px] px-6 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-opacity w-full sm:w-auto flex items-center"
+              >
                 GET YOUR BADGE
-              </button>
+              </Link>
               
               <button 
               onClick={handleScroll} 
