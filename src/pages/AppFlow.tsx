@@ -13,8 +13,9 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ENTRY_QUESTION, getQuestionsForPath } from "@/lib/badges/questions";
-import { scoreForPath } from "@/lib/badges/scoring";
-import { submitToWebhook } from "@/lib/badges/webhook";
+import { scoreForPath, scoreForPathWithAdjustedScore } from "@/lib/badges/scoring";
+import { submitToWebhook, validateOpenText } from "@/lib/badges/webhook";
+import { captureLead } from "@/lib/badges/leads";
 import type { BadgeLevel, Intent, PathKey, ScoringResult, backendResponse } from "@/lib/badges/types";
 import { toast } from "sonner";
 import "./../badge-theme.css";
@@ -46,12 +47,14 @@ const ACCENT_BG = {
 
 const AppFlow = () => {
   const isMobile = useIsMobile();
+
   const [stage, setStage] = useState<Stage>("welcome");
   const [registration, setRegistration] = useState<RegistrationData | null>(null);
   const [path, setPath] = useState<PathKey | null>(null);
   const [entryAnswer, setEntryAnswer] = useState<string>("");
   const [questionIdx, setQuestionIdx] = useState(0);
   const [answers, setAnswers] = useState<Record<string, AnswerRecord>>({});
+  const [selectedAnswer, setSelectedAnswer] = useState<AnswerRecord | null>(null);
   const [openText, setOpenText] = useState("");
   const [honesty, setHonesty] = useState(false);
   const [intent, setIntent] = useState<Intent>({
@@ -59,19 +62,18 @@ const AppFlow = () => {
     hiringGlobalRoles: false,
     exploring: false,
   });
-  const [result, setResult] = useState<ScoringResult | null>(null);
 
-  const [user, setUser] = useState<{
-    name: string | null;
-    email: string | null;
-  } | null>(null);
+  const [result, setResult] = useState<ScoringResult | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [reroutedFrom, setReroutedFrom] = useState<PathKey | null>(null);
+  const [processingFinished, setProcessingFinished] = useState(false);
 
   const API_URL = import.meta.env.VITE_API_URL;
 
   const questions = useMemo(() => (path ? getQuestionsForPath(path) : []), [path]);
 
-  // Total dynamic steps for progress: entry + path questions + 3 closing
   const totalSteps = path ? 1 + questions.length + 3 : 1;
+
   const currentStep = (() => {
     if (stage === "entry") return 1;
     if (stage === "questions") return 1 + questionIdx + 1;
@@ -83,6 +85,12 @@ const AppFlow = () => {
 
   const accent = path ? PATH_ACCENT[path] : "champion";
 
+  useEffect(() => {
+    if (stage === "processing" && result && processingFinished) {
+      setStage("results");
+    }
+  }, [stage, result, processingFinished]);
+
   const reset = () => {
     setStage("welcome");
     setRegistration(null);
@@ -90,14 +98,21 @@ const AppFlow = () => {
     setEntryAnswer("");
     setQuestionIdx(0);
     setAnswers({});
+    setSelectedAnswer(null);
     setOpenText("");
     setHonesty(false);
-    setIntent({ seekingOpportunities: false, hiringGlobalRoles: false, exploring: false });
+    setIntent({
+      seekingOpportunities: false,
+      hiringGlobalRoles: false,
+      exploring: false,
+    });
     setResult(null);
+    setIsSubmitting(false);
+    setReroutedFrom(null);
+    setProcessingFinished(false);
   };
 
-  const handleRegistration = (data) => {
-
+  const handleRegistration = (data: RegistrationData) => {
     if (data?.email) {
       localStorage.setItem("user_email", decodeURIComponent(data.email));
     }
@@ -107,38 +122,93 @@ const AppFlow = () => {
     }
 
     setRegistration(data);
-  }
+  };
 
-  // ---------- Entry handling ----------
   const handleEntrySelect = (idx: number) => {
     const opt = ENTRY_QUESTION.options[idx];
+
     setEntryAnswer(opt.label);
     setPath(opt.path);
-  };
-  const handleEntryContinue = () => {
-    if (!path) return;
-    setStage("questions");
+    setAnswers({});
+    setSelectedAnswer(null);
     setQuestionIdx(0);
+    setReroutedFrom(null);
   };
 
-  // ---------- Questions handling ----------
+  const handleEntryContinue = () => {
+    if (!path) return;
+
+    setStage("questions");
+    setQuestionIdx(0);
+    setSelectedAnswer(null);
+  };
+
   const currentQuestion = questions[questionIdx];
+
   const handleQuestionSelect = (optIdx: number) => {
     if (!currentQuestion) return;
+
     const opt = currentQuestion.options[optIdx];
+
+    const answer: AnswerRecord = {
+      label: opt.label,
+      points: opt.points,
+      flag: opt.flag,
+    };
+
+    setSelectedAnswer(answer);
+
     setAnswers((prev) => ({
       ...prev,
-      [currentQuestion.id]: { label: opt.label, points: opt.points, flag: opt.flag },
+      [currentQuestion.id]: answer,
     }));
   };
+
   const handleQuestionContinue = () => {
+    if (!currentQuestion || !path) return;
+
+    const currentAnswer = selectedAnswer ?? answers[currentQuestion.id];
+
+    if (!currentAnswer) return;
+
+    if (currentAnswer.flag === "fail") {
+      setSelectedAnswer(null);
+      setStage("open_text");
+      return;
+    }
+
+    if (currentAnswer.flag === "reroute_talent") {
+      setReroutedFrom(path);
+      setPath("A");
+      setQuestionIdx(0);
+      setAnswers({});
+      setSelectedAnswer(null);
+      toast.info("Redirecting you to the Global Talent track.");
+      return;
+    }
+
+    if (currentAnswer.flag === "reroute_champion") {
+      setReroutedFrom(path);
+      setPath("B");
+      setQuestionIdx(0);
+      setAnswers({});
+      setSelectedAnswer(null);
+      toast.info("Redirecting you to the Global Champion track.");
+      return;
+    }
+
+    setSelectedAnswer(null);
+
     if (questionIdx < questions.length - 1) {
       setQuestionIdx((i) => i + 1);
     } else {
       setStage("open_text");
     }
   };
+
   const handleQuestionBack = () => {
+    setSelectedAnswer(null);
+
     if (questionIdx === 0) {
       setStage("entry");
     } else {
@@ -146,91 +216,159 @@ const AppFlow = () => {
     }
   };
 
-  // ---------- Closing flow ----------
   const handleClosingContinue = async () => {
-    if (stage === "open_text") return setStage("honesty");
-    if (stage === "honesty") return setStage("intent");
+    if (stage === "open_text") {
+      setStage("honesty");
+      return;
+    }
 
-    if (stage === "intent") {
-      if (!path) return;
+    if (stage === "honesty") {
+      setStage("intent");
+      return;
+    }
 
-      const r = scoreForPath(path, answers);
+    if (stage !== "intent") return;
+    if (!path || isSubmitting) return;
 
-      const payload = {
-        name: registration?.fullName ?? "",
-        email: registration?.email ?? "",
-        jobTitle: registration?.jobTitle ?? "",
-        companyName: registration?.companyName ?? "",
-        badge: r.badge,
-        maxScore: r.maxScore,
-        reason: r.reason,
-        score: r.score,
-        answers: answers
-      };
+    setIsSubmitting(true);
+    setProcessingFinished(false);
+    setStage("processing");
 
-      try {
-        const res = await fetch(`${API_URL}/api/results`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        });
+    const rawResult = scoreForPath(path, answers);
 
-        const data: backendResponse = await res.json();
+    const validation = await validateOpenText({
+      path,
+      entryAnswer,
+      answers,
+      openText,
+    });
 
-        const finalResult: ScoringResult = {
-          ...r,
-          credentialUrl: data.credentialUrl,
-          validation_page_url: data.validation_page_url,
-          identification_number: data.identification_number,
-          tier: data.tier
-        };
+    if (validation.shouldRetry) {
+      toast.error(
+        "Please provide a more detailed and consistent explanation."
+      );
 
-        setResult(finalResult);
+      setStage("open_text");
+      setIsSubmitting(false);
 
-      } catch (error) {
-        console.error("Error creating badge:", error);
-        setResult(r); // fallback sin URL
-      }
+      return;
+    }
 
-      void submitToWebhook({
-        path,
-        entryAnswer,
-        answers,
-        openText,
-        honestyConfirmed: honesty,
-        intent,
-        result: r,
-        timestamp: new Date().toISOString(),
+    const adjustedScore = Math.round(
+      rawResult.score * validation.scoreModifier
+    );
+
+    const adjustedResult = scoreForPathWithAdjustedScore(
+      path,
+      answers,
+      adjustedScore
+    );
+
+    const finalScoring: ScoringResult = {
+      ...adjustedResult,
+
+      rawScore: rawResult.score,
+      adjustedScore,
+
+      aiValidation: validation,
+
+      reroutedFrom:
+        reroutedFrom ??
+        adjustedResult.reroutedFrom ??
+        rawResult.reroutedFrom,
+    };
+
+    const payload = {
+      name: registration?.fullName ?? "",
+      email: registration?.email ?? "",
+      jobTitle: registration?.jobTitle ?? "",
+      companyName: registration?.companyName ?? "",
+      badge: finalScoring.badge,
+      maxScore: finalScoring.maxScore,
+      reason: finalScoring.reason,
+      score: finalScoring.score,
+      reroutedFrom: finalScoring.reroutedFrom,
+      answers,
+      openText,
+      honestyConfirmed: honesty,
+      intent,
+      rawScore: finalScoring.rawScore,
+      adjustedScore: finalScoring.adjustedScore,
+      aiValidation: finalScoring.aiValidation,
+    };
+
+    try {
+      const res = await fetch(`${API_URL}/api/results`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
       });
 
-      setStage("processing");
+      if (!res.ok) {
+        throw new Error("Failed creating badge");
+      }
+
+      const data: backendResponse = await res.json();
+
+      const finalResult: ScoringResult = {
+        ...finalScoring,
+        credentialUrl: data.credentialUrl,
+        validation_page_url: data.validation_page_url,
+        identification_number: data.identification_number,
+        tier: data.tier,
+      };
+
+      setResult(finalResult);
+    } catch (error) {
+      console.error("Error creating badge:", error);
+      setResult(finalScoring);
     }
+
+    void submitToWebhook({
+      path,
+      entryAnswer,
+      answers,
+      openText,
+      honestyConfirmed: honesty,
+      intent,
+      result: finalScoring,
+      aiValidation: validation,
+      timestamp: new Date().toISOString(),
+    });
+
+    setIsSubmitting(false);
   };
 
-  // ---------- Render ----------
   return (
     <div className="bdg-theme min-h-screen bg-bdg-background flex flex-col">
       <Header />
-      <div className={ACCENT_BG[accent]} style={{ height: 220 }} />
-      <main className="flex-1 container max-w-2xl py-6 sm:py-10 px-4 sm:px-6">
-        <div
-          className="deel-container flex justify-center"
-          style={{ marginTop: -224 }}
-        >
 
+      <div className={ACCENT_BG[accent]} style={{ height: 220 }} />
+
+      <main className="flex-1 container max-w-2xl py-6 sm:py-10 px-4 sm:px-6">
+        <div className="deel-container flex justify-center" style={{ marginTop: -224 }}>
           <div
             className="bg-background rounded-[20px] shadow-[0_8px_40px_rgba(0,0,0,0.10)] w-full flex flex-col items-center"
             style={{ padding: "48px 40px 56px" }}
           >
-
-            {stage === "welcome" && <WelcomeScreen onStart={() => setStage("registration")} />}
+            {stage === "welcome" && (
+              <WelcomeScreen onStart={() => setStage("registration")} />
+            )}
 
             {stage === "registration" && (
               <RegistrationScreen
                 onContinue={(data) => {
                   handleRegistration(data);
+
+                  void captureLead({
+                    name: data.fullName,
+                    email: data.email,
+                    job: data.jobTitle,
+                    company: data.companyName,
+                  });
+
                   setStage("entry");
                 }}
               />
@@ -267,10 +405,14 @@ const AppFlow = () => {
                   current={currentStep}
                   total={totalSteps}
                   accentClass={
-                    accent === "talent" ? "bg-bdg-talent" :
-                      accent === "leader" ? "bg-bdg-leader" : "bg-bdg-champion"
+                    accent === "talent"
+                      ? "bg-bdg-talent"
+                      : accent === "leader"
+                        ? "bg-bdg-leader"
+                        : "bg-bdg-champion"
                   }
                 />
+
                 <ClosingScreen
                   step={stage}
                   openText={openText}
@@ -284,11 +426,14 @@ const AppFlow = () => {
               </div>
             )}
 
-            {stage === "processing" && <ProcessingScreen onDone={() => setStage("results")} />}
+            {stage === "processing" && (
+              <ProcessingScreen onDone={() => setProcessingFinished(true)} />
+            )}
 
-            {stage === "results" && result && <ResultsScreen result={result} onRestart={reset} />}
+            {stage === "results" && result && (
+              <ResultsScreen result={result} onRestart={reset} />
+            )}
           </div>
-
         </div>
       </main>
 
@@ -297,7 +442,6 @@ const AppFlow = () => {
   );
 };
 
-// Entry uses a slightly different rendering than QuestionScreen (no points, routes path)
 function EntryScreen({
   selectedLabel,
   onSelect,
@@ -316,54 +460,70 @@ function EntryScreen({
   return (
     <div className="bdg-theme space-y-8">
       <ProgressBar current={currentStep} total={totalSteps} />
+
       <div className="space-y-6 animate-slide-in-right">
         <div className="space-y-2.5">
           <p className="text-xs font-semibold uppercase tracking-wider text-bdg-primary">
             Let's get started
           </p>
+
           <h2 className="text-2xl sm:text-[28px] font-bold tracking-tight text-navy leading-tight">
             {ENTRY_QUESTION.prompt}
           </h2>
         </div>
-        <div className="space-y-3">
+
+        <div className="space-y-3" role="radiogroup">
           {ENTRY_QUESTION.options.map((opt, i) => {
             const selected = opt.label === selectedLabel;
+
             return (
               <button
                 key={opt.label}
                 type="button"
+                role="radio"
+                aria-checked={selected}
                 onClick={() => onSelect(i)}
                 className={cn(
                   "group w-full text-left rounded-2xl border-2 p-4 sm:p-5 transition-all duration-200 ease-smooth",
                   "min-h-[64px] flex items-center gap-4 hover:border-foreground/20 hover:shadow-card active:scale-[0.99]",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 animate-fade-in",
-                  selected ? "border-bdg-primary bg-bdg-primary-soft text-bdg-primary shadow-card" : "border-border bg-card"
+                  selected
+                    ? "border-bdg-primary bg-bdg-primary-soft text-bdg-primary shadow-card"
+                    : "border-border bg-card"
                 )}
                 style={{ animationDelay: `${i * 50}ms` }}
-                aria-pressed={selected}
               >
-                <div className={cn(
-                  "flex-shrink-0 h-6 w-6 rounded-full border-2 flex items-center justify-center transition-colors",
-                  selected ? "border-bdg-primary bg-bdg-primary text-white" : "border-border"
-                )}>
+                <div
+                  className={cn(
+                    "flex-shrink-0 h-6 w-6 rounded-full border-2 flex items-center justify-center transition-colors",
+                    selected
+                      ? "border-bdg-primary bg-bdg-primary text-white"
+                      : "border-border"
+                  )}
+                >
                   {selected && <div className="h-2 w-2 rounded-full bg-white" />}
                 </div>
-                <span className="text-base sm:text-[17px] font-medium text-foreground/90">{opt.label}</span>
+
+                <span className="text-base sm:text-[17px] font-medium text-foreground/90">
+                  {opt.label}
+                </span>
               </button>
             );
           })}
         </div>
       </div>
+
       <div className="flex items-center gap-3 pt-2">
         <Button
           variant="ghost"
           size="lg"
           onClick={onBack}
-          className="hover:bg-bdg-minprimary/90 gap-1 h-12 px-3 text-muted-foreground "
+          className="hover:bg-bdg-minprimary/90 gap-1 h-12 px-3 text-muted-foreground"
         >
           <ArrowLeft className="h-4 w-4" />
           <span className="hidden sm:inline">Back</span>
         </Button>
+
         <Button
           size="lg"
           onClick={onContinue}

@@ -44,8 +44,13 @@ export function ClosingScreen(props: ClosingScreensProps) {
         />
         <div className="flex items-center justify-between">
           <span className="text-xs text-muted-foreground tabular-nums">{openText.length}/600</span>
+          {openText.trim().length < 80 && (
+            <p className="text-xs text-amber-600">
+              Please provide a more detailed explanation.
+            </p>
+          )}
         </div>
-        <ContinueButton disabled={openText.trim().length < 20} onClick={onContinue} />
+        <ContinueButton disabled={openText.trim().length < 80} onClick={onContinue} />
       </div>
     );
   }
@@ -62,22 +67,38 @@ export function ClosingScreen(props: ClosingScreensProps) {
             Deel Global Badges represent verified credentials. Please confirm your responses are accurate.
           </p>
         </div>
-        <button
-          type="button"
+        <div
+          role="button"
+          tabIndex={0}
           onClick={() => setHonesty(!honesty)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              setHonesty(!honesty);
+            }
+          }}
           className={cn(
-            "w-full rounded-2xl border-2 p-5 text-left flex gap-4 items-start transition-all",
-            honesty ? "border-bdg-primary bg-bdg-primary-soft" : "border-border bg-card hover:border-foreground/20"
+            "w-full rounded-2xl border-2 p-5 text-left flex gap-4 items-start transition-all cursor-pointer",
+            honesty
+              ? "border-bdg-primary bg-bdg-primary-soft"
+              : "border-border bg-card hover:border-foreground/20"
           )}
         >
-          <Checkbox checked={honesty} onCheckedChange={(v) => setHonesty(!!v)} className="mt-0.5" />
+          <Checkbox
+            checked={honesty}
+            onCheckedChange={(v) => setHonesty(!!v)}
+            className="mt-0.5"
+          />
+
           <div className="space-y-1">
-            <p className="font-semibold text-foreground">I stand by the truth of these answers</p>
+            <p className="font-semibold text-foreground">
+              I stand by the truth of these answers
+            </p>
+
             <p className="text-sm text-muted-foreground">
               I understand that misrepresentation may result in revocation of my badge.
             </p>
           </div>
-        </button>
+        </div>
         <ContinueButton disabled={!honesty} onClick={onContinue} />
       </div>
     );
@@ -121,10 +142,16 @@ export function ClosingScreen(props: ClosingScreensProps) {
           const checked = intent[opt.key];
           const Icon = opt.icon;
           return (
-            <button
+            <div
+              role="button"
+              tabIndex={0}
               key={opt.key}
-              type="button"
               onClick={() => setIntent({ ...intent, [opt.key]: !checked })}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  setIntent({ ...intent, [opt.key]: !checked });
+                }
+              }}
               className={cn(
                 "w-full rounded-2xl border-2 p-4 text-left flex gap-4 items-start transition-all",
                 checked ? "border-bdg-primary bg-bdg-primary-soft" : "border-border bg-card hover:border-foreground/20"
@@ -141,11 +168,11 @@ export function ClosingScreen(props: ClosingScreensProps) {
                 <p className="text-xs text-muted-foreground">{opt.desc}</p>
               </div>
               <Checkbox checked={checked} onCheckedChange={(v) => setIntent({ ...intent, [opt.key]: !!v })} className="mt-1" />
-            </button>
+            </div>
           );
         })}
       </div>
-      <ContinueButton disabled={isClicked} onClick={() => { onContinue(); setIsClicked(true); }} label={isClicked ? "Loading..." : "See my badge"}  />
+      <ContinueButton disabled={isClicked} onClick={() => { onContinue(); setIsClicked(true); }} label={isClicked ? "Loading..." : "See my badge"} />
     </div>
   );
 }

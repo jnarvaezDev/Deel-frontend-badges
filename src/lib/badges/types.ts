@@ -1,5 +1,13 @@
 export type PathKey = "A" | "B" | "C";
 export type BadgeLevel = "talent" | "champion" | "leader" | "none";
+export type AiValidationLevel = "high" | "medium" | "low";
+
+export interface AiValidationResult {
+  level: AiValidationLevel;
+  scoreModifier: number;
+  shouldRetry: boolean;
+  notes?: string;
+}
 
 export interface Option {
   label: string;
@@ -25,6 +33,9 @@ export interface ScoringResult {
   identification_number?: string;
   tier?: string;
   id?: number;
+  rawScore?: number;
+  adjustedScore?: number;
+  aiValidation?: AiValidationResult;
 }
 
 export interface Intent {
@@ -51,4 +62,5 @@ export interface SubmissionPayload {
   intent: Intent;
   result: ScoringResult;
   timestamp: string;
+  aiValidation?: AiValidationResult;
 }
