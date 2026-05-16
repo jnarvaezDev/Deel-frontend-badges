@@ -42,7 +42,6 @@ export function scorePathB(answers: Answers): ScoringResult {
   const total = Object.values(answers).reduce((s, a) => s + a.points, 0);
   const q1 = answers["B1"];
   const q2 = answers["B2"];
-  const q4 = answers["B4"];
 
   if (q1?.flag === "reroute_talent") {
     return {
@@ -54,7 +53,7 @@ export function scorePathB(answers: Answers): ScoringResult {
     };
   }
 
-  if (q2?.flag === "fail" || q4?.flag === "fail") {
+  if (q2?.flag === "fail") {
     return { badge: "none", score: total, maxScore: 15, reason: "hard_gate" };
   }
 
@@ -145,7 +144,6 @@ export function scoreForPathWithAdjustedScore(
   if (path === "B") {
     const q1 = answers["B1"];
     const q2 = answers["B2"];
-    const q4 = answers["B4"];
 
     if (q1?.flag === "reroute_talent") {
       return {
@@ -156,7 +154,7 @@ export function scoreForPathWithAdjustedScore(
       };
     }
 
-    if (q2?.flag === "fail" || q4?.flag === "fail") {
+    if (q2?.flag === "fail") {
       return {
         badge: "none",
         score: adjustedScore,

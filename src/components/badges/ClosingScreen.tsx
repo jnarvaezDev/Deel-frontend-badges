@@ -107,29 +107,31 @@ export function ClosingScreen(props: ClosingScreensProps) {
   // intent
   const intentOptions = [
     {
-      key: "seekingOpportunities" as const,
-      icon: Briefcase,
-      title: "I'd like international job opportunities matching my profile",
-      desc: "Get matched with global roles based on your badge",
-    },
-    {
       key: "hiringGlobalRoles" as const,
       icon: Users,
       title: "I'm currently hiring for global roles",
       desc: "Connect with Deel to scale your global team",
     },
     {
+      key: "seekingOpportunities" as const,
+      icon: Briefcase,
+      title: "I’d like to receive international job opportunities",
+      desc: "Get matched with global roles based on your badge",
+    },
+    {
       key: "exploring" as const,
       icon: Compass,
-      title: "Just exploring — no action needed",
+      title: "I'm just exploring — no action needed for now",
       desc: "We'll keep you posted on relevant updates only",
     },
   ];
 
+  const hasSelectedIntent = Object.values(intent).some(Boolean);
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-wider text-bdg-primary">Optional</p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-bdg-primary">Required</p>
         <h2 className="text-2xl sm:text-[28px] font-bold tracking-tight text-navy leading-tight">
           What's your intent?
         </h2>
@@ -172,7 +174,7 @@ export function ClosingScreen(props: ClosingScreensProps) {
           );
         })}
       </div>
-      <ContinueButton disabled={isClicked} onClick={() => { onContinue(); setIsClicked(true); }} label={isClicked ? "Loading..." : "See my badge"} />
+      <ContinueButton disabled={!hasSelectedIntent || isClicked} onClick={() => { onContinue(); setIsClicked(true); }} label={isClicked ? "Loading..." : "See my badge"} />
     </div>
   );
 }

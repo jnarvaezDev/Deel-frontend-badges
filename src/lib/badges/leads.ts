@@ -1,8 +1,8 @@
 export async function captureLead(payload: {
   name: string;
   email: string;
-  job: string;
-  company: string;
+  currentJobTitle: string;
+  currentCountry: string;
 }) {
 
   const API_URL = import.meta.env.VITE_API_URL;

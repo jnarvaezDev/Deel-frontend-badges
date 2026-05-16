@@ -45,12 +45,15 @@ export interface Intent {
 }
 
 export interface backendResponse {
-  id: number;
-  tier: string;
-  credentialUrl: string;
-  issuedBy: string;
+  id?: number;
+  tier?: string;
+  credentialUrl?: string;
+  issuedBy?: string | null;
   validation_page_url?: string;
   identification_number?: string;
+  status?: "locked";
+  message?: string;
+  nextAvailableDate?: string;
 }
 
 export interface SubmissionPayload {

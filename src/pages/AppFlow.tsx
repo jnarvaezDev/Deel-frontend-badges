@@ -29,7 +29,13 @@ type Stage =
   | "honesty"
   | "intent"
   | "processing"
-  | "results";
+  | "results"
+  | "locked";
+
+type LockedInfo = {
+  message: string;
+  nextAvailableDate: string;
+};
 
 type AnswerRecord = { label: string; points: number; flag?: string };
 
@@ -67,6 +73,7 @@ const AppFlow = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [reroutedFrom, setReroutedFrom] = useState<PathKey | null>(null);
   const [processingFinished, setProcessingFinished] = useState(false);
+  const [lockedInfo, setLockedInfo] = useState<LockedInfo | null>(null);
 
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -110,6 +117,7 @@ const AppFlow = () => {
     setIsSubmitting(false);
     setReroutedFrom(null);
     setProcessingFinished(false);
+    setLockedInfo(null);
   };
 
   const handleRegistration = (data: RegistrationData) => {
@@ -243,17 +251,6 @@ const AppFlow = () => {
       openText,
     });
 
-    if (validation.shouldRetry) {
-      toast.error(
-        "Please provide a more detailed and consistent explanation."
-      );
-
-      setStage("open_text");
-      setIsSubmitting(false);
-
-      return;
-    }
-
     const adjustedScore = Math.round(
       rawResult.score * validation.scoreModifier
     );
@@ -280,9 +277,11 @@ const AppFlow = () => {
 
     const payload = {
       name: registration?.fullName ?? "",
+      professionalEmail: registration?.email ?? "",
       email: registration?.email ?? "",
+      currentJobTitle: registration?.jobTitle ?? "",
+      currentCountry: registration?.currentCountry ?? "",
       jobTitle: registration?.jobTitle ?? "",
-      companyName: registration?.companyName ?? "",
       badge: finalScoring.badge,
       maxScore: finalScoring.maxScore,
       reason: finalScoring.reason,
@@ -311,6 +310,19 @@ const AppFlow = () => {
       }
 
       const data: backendResponse = await res.json();
+
+      if (data.status === "locked") {
+        setLockedInfo({
+          message:
+            data.message ??
+            "You can only take the assessment once every 6 months.",
+          nextAvailableDate: data.nextAvailableDate ?? "",
+        });
+        setStage("locked");
+        setIsSubmitting(false);
+        setProcessingFinished(false);
+        return;
+      }
 
       const finalResult: ScoringResult = {
         ...finalScoring,
@@ -365,8 +377,8 @@ const AppFlow = () => {
                   void captureLead({
                     name: data.fullName,
                     email: data.email,
-                    job: data.jobTitle,
-                    company: data.companyName,
+                    currentJobTitle: data.jobTitle,
+                    currentCountry: data.currentCountry,
                   });
 
                   setStage("entry");
@@ -431,7 +443,11 @@ const AppFlow = () => {
             )}
 
             {stage === "results" && result && (
-              <ResultsScreen result={result} onRestart={reset} />
+              <ResultsScreen result={result} />
+            )}
+
+            {stage === "locked" && lockedInfo && (
+              <LockedScreen lockedInfo={lockedInfo} />
             )}
           </div>
         </div>
@@ -534,6 +550,24 @@ function EntryScreen({
           <ArrowRight className="h-4 w-4" />
         </Button>
       </div>
+    </div>
+  );
+}
+
+function LockedScreen({ lockedInfo }: { lockedInfo: LockedInfo }) {
+  return (
+    <div className="max-w-xl mx-auto text-center space-y-5 animate-fade-in py-8">
+      <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-navy">
+        Assessment temporarily locked
+      </h1>
+      <p className="text-muted-foreground text-base leading-relaxed max-w-md mx-auto">
+        {lockedInfo.message}
+      </p>
+      {lockedInfo.nextAvailableDate && (
+        <p className="text-sm font-medium text-navy">
+          Next available date: {lockedInfo.nextAvailableDate}
+        </p>
+      )}
     </div>
   );
 }

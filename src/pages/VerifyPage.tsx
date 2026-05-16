@@ -11,10 +11,10 @@ type Verification = {
 };
 
 const tierDisplayMap: Record<string, string> = {
-  "Global Potential": "Global Potential 🌱",
-  "Global Talent": "Global Talent ⭐",
-  "Global Leader": "Global Leader 🚀",
-  "Global Champion": "Global Champion 🏆",
+  "Global Potential": "Global Potential",
+  "Global Talent": "Global Talent",
+  "Global Leader": "Global Leader",
+  "Global Champion": "Global Champion",
 };
 
 const badgeMap: Record<string, string> = {

@@ -137,12 +137,11 @@ export const PATH_B: Question[] = [
   },
   {
     id: "B4",
-    prompt:
-      "Have you worked directly with colleagues or teams based in regions (continents) of the world other than your own?",
+    prompt: "How many continents have you worked with professionally?",
     options: [
-      { label: "No", points: 0, flag: "fail" },
-      { label: "Yes, with 1 other region", points: 2 },
-      { label: "Yes, with 2 other regions or more", points: 3 },
+      { label: "1 continent", points: 1 },
+      { label: "2 continents", points: 2 },
+      { label: "3 continents or more", points: 3 },
     ],
   },
   {
@@ -172,7 +171,7 @@ export const PATH_B: Question[] = [
 export const PATH_C: Question[] = [
   {
     id: "C1",
-    prompt: "How many direct reports do you manage in countries other than your own?",
+    prompt: "How many direct reports do(did) you manage in countries other than your own?",
     options: [
       { label: "None", points: 0, flag: "reroute_champion" },
       { label: "1 person", points: 1, flag: "reroute_champion" },
@@ -214,11 +213,11 @@ export const PATH_C: Question[] = [
   },
   {
     id: "C4",
-    prompt: "How many world regions have you led work in?",
+    prompt: "How many continents have you led work in?",
     options: [
-      { label: "1 region", points: 1 },
-      { label: "2 regions", points: 2 },
-      { label: "3 regions or more", points: 3 },
+      { label: "1 continent", points: 1 },
+      { label: "2 continents", points: 2 },
+      { label: "3 continents or more", points: 3 },
     ],
   },
 ];

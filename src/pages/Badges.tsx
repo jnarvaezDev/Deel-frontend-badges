@@ -56,8 +56,9 @@ export default function Badges() {
       if (!res.ok) throw new Error("Failed to fetch badges");
       const json: BadgesResponse = await res.json();
       setBadges(json.data);
-    } catch (e: any) {
-      setError(e.message ?? "Something went wrong");
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Something went wrong";
+      setError(message);
     } finally {
       setLoading(false);
     }

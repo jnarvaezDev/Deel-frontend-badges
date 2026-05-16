@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowRight, User, Mail, Briefcase, Building2 } from "lucide-react";
+import { ArrowRight, User, Mail, Briefcase, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { isBlockedPublicEmail } from "@/lib/badges/email";
 
 export interface RegistrationData {
   fullName: string;
   email: string;
   jobTitle: string;
-  companyName: string;
+  currentCountry: string;
 }
 
 interface RegistrationScreenProps {
@@ -22,19 +23,23 @@ export function RegistrationScreen({ onContinue }: RegistrationScreenProps) {
     fullName: "",
     email: "",
     jobTitle: "",
-    companyName: "",
+    currentCountry: "",
   });
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const errors = {
     fullName: !form.fullName.trim() ? "Full name is required" : "",
     email: !form.email.trim()
-      ? "Email is required"
+      ? "Professional email is required"
       : !EMAIL_REGEX.test(form.email.trim())
       ? "Enter a valid email address"
+      : isBlockedPublicEmail(form.email)
+      ? "Please enter your professional email (personal domains are not allowed)"
       : "",
     jobTitle: !form.jobTitle.trim() ? "Job title is required" : "",
-    companyName: !form.companyName.trim() ? "Company name is required" : "",
+    currentCountry: !form.currentCountry.trim()
+      ? "Current country is required"
+      : "",
   };
 
   const isValid = Object.values(errors).every((e) => !e);
@@ -47,7 +52,7 @@ export function RegistrationScreen({ onContinue }: RegistrationScreenProps) {
 
   const handleSubmit = () => {
     if (!isValid) {
-      setTouched({ fullName: true, email: true, jobTitle: true, companyName: true });
+      setTouched({ fullName: true, email: true, jobTitle: true, currentCountry: true });
       return;
     }
     onContinue(form);
@@ -61,9 +66,9 @@ export function RegistrationScreen({ onContinue }: RegistrationScreenProps) {
     icon: typeof User;
   }[] = [
     { key: "fullName", label: "Full Name", placeholder: "Jane Doe", type: "text", icon: User },
-    { key: "email", label: "Email Address", placeholder: "jane@company.com", type: "email", icon: Mail },
-    { key: "jobTitle", label: "Job Title", placeholder: "Head of Global Operations", type: "text", icon: Briefcase },
-    { key: "companyName", label: "Company Name", placeholder: "Acme Inc.", type: "text", icon: Building2 },
+    { key: "email", label: "Professional Email", placeholder: "jane@company.com", type: "email", icon: Mail },
+    { key: "jobTitle", label: "Current Job Title", placeholder: "Head of Global Operations", type: "text", icon: Briefcase },
+    { key: "currentCountry", label: "Your current country", placeholder: "United States", type: "text", icon: MapPin },
   ];
 
   return (

@@ -1,16 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { BadgeMedal } from "./BadgeMedal";
 import { BADGE_META } from "@/lib/badges/results";
-import type { ScoringResult, backendResponse } from "@/lib/badges/types";
-import { ExternalLink, Download, ArrowRight, RotateCcw, AlertCircle } from "lucide-react";
+import type { ScoringResult } from "@/lib/badges/types";
+import { ExternalLink, ArrowRight, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { generateLinkedInUrl } from "@/utils/badge";
 
 interface ResultsScreenProps {
   result: ScoringResult;
-  onRestart: () => void;
 }
 
-export function ResultsScreen({ result, onRestart }: ResultsScreenProps) {
+export function ResultsScreen({ result }: ResultsScreenProps) {
 
 
   if (result.badge === "none") {
@@ -37,14 +37,18 @@ export function ResultsScreen({ result, onRestart }: ResultsScreenProps) {
             <li className="flex gap-2"><ArrowRight className="h-4 w-4 mt-0.5 text-bdg-primary flex-shrink-0" />Build experience collaborating async across regions</li>
           </ul>
         </div>
-        <Button variant="outline" onClick={onRestart} className="gap-2">
-          <RotateCcw className="h-4 w-4" /> Start over
-        </Button>
       </div>
     );
   }
 
   const meta = BADGE_META[result.badge];
+  const linkedinUrl = result.credentialUrl
+    ? generateLinkedInUrl({
+      tier: result.tier ?? meta.name,
+      id: String(result.id ?? ""),
+      url: result.credentialUrl,
+    })
+    : "#";
 
   return (
     <div className="max-w-2xl mx-auto space-y-8 animate-fade-in py-4">
@@ -95,9 +99,9 @@ export function ResultsScreen({ result, onRestart }: ResultsScreenProps) {
           size="lg"
           className={cn("flex-1 gap-2 h-12", meta.gradientClass, "text-white border-0 hover:opacity-90")}
         >
-          <a href={result.credentialUrl} target="_blank" rel="noopener noreferrer">
+          <a href={linkedinUrl} target="_blank" rel="noopener noreferrer">
             <ExternalLink className="h-4 w-4" />
-            View Badge
+            Add badge in Linkedin
           </a>
         </Button>
       </div>
@@ -127,11 +131,6 @@ export function ResultsScreen({ result, onRestart }: ResultsScreenProps) {
         </ul>
       </div>
 
-      <div className="text-center">
-        <button onClick={onRestart} className="text-sm text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 transition-colors">
-          <RotateCcw className="h-3.5 w-3.5" /> Take the assessment again
-        </button>
-      </div>
     </div>
   );
 }
