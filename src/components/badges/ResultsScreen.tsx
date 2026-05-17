@@ -4,7 +4,6 @@ import { BADGE_META } from "@/lib/badges/results";
 import type { ScoringResult } from "@/lib/badges/types";
 import { ExternalLink, ArrowRight, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { generateLinkedInUrl } from "@/utils/badge";
 
 interface ResultsScreenProps {
   result: ScoringResult;
@@ -42,13 +41,6 @@ export function ResultsScreen({ result }: ResultsScreenProps) {
   }
 
   const meta = BADGE_META[result.badge];
-  const linkedinUrl = result.credentialUrl
-    ? generateLinkedInUrl({
-      tier: result.tier ?? meta.name,
-      id: String(result.id ?? ""),
-      url: result.credentialUrl,
-    })
-    : "#";
 
   return (
     <div className="max-w-2xl mx-auto space-y-8 animate-fade-in py-4">
@@ -99,7 +91,7 @@ export function ResultsScreen({ result }: ResultsScreenProps) {
           size="lg"
           className={cn("flex-1 gap-2 h-12", meta.gradientClass, "text-white border-0 hover:opacity-90")}
         >
-          <a href={linkedinUrl} target="_blank" rel="noopener noreferrer">
+          <a href={result.credentialUrl ?? "#"} target="_blank" rel="noopener noreferrer">
             <ExternalLink className="h-4 w-4" />
             Add badge in Linkedin
           </a>
