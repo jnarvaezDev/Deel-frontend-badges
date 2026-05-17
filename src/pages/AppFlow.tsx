@@ -277,7 +277,6 @@ const AppFlow = () => {
 
     const payload = {
       name: registration?.fullName ?? "",
-      professionalEmail: registration?.email ?? "",
       email: registration?.email ?? "",
       currentJobTitle: registration?.jobTitle ?? "",
       currentCountry: registration?.currentCountry ?? "",
