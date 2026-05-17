@@ -42,7 +42,7 @@ export function ClosingScreen(props: ClosingScreensProps) {
           className="resize-none text-base p-4 rounded-2xl border-2 focus-visible:ring-2 focus-visible:ring-bdg-primary/30"
           maxLength={600}
         />
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col items-start gap-1.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
           <span className="text-xs text-muted-foreground tabular-nums">{openText.length}/600</span>
           {openText.trim().length < 80 && (
             <p className="text-xs text-amber-600">

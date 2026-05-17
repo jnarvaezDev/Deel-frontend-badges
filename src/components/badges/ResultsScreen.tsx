@@ -85,13 +85,18 @@ export function ResultsScreen({ result }: ResultsScreenProps) {
       </div>
 
       {/* CTAs */}
-      <div className="flex flex-col sm:flex-row gap-3 pt-2">
+      <div className="flex flex-col sm:flex-row gap-3 pt-3 pb-2 sm:pt-2 sm:pb-0">
         <Button
           asChild
           size="lg"
-          className={cn("flex-1 gap-2 h-12", meta.gradientClass, "text-white border-0 hover:opacity-90")}
+          className={cn("flex-1 gap-2 h-12 px-4", meta.gradientClass, "text-white border-0 hover:opacity-90")}
         >
-          <a href={result.credentialUrl ?? "#"} target="_blank" rel="noopener noreferrer">
+          <a
+            href={result.credentialUrl ?? "#"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full h-full inline-flex items-center justify-center gap-2 py-3 leading-none"
+          >
             <ExternalLink className="h-4 w-4" />
             Add badge in Linkedin
           </a>
