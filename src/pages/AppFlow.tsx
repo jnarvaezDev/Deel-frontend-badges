@@ -543,7 +543,7 @@ function EntryScreen({
           size="lg"
           onClick={onContinue}
           disabled={!selectedLabel}
-          className="bg-bdg-primary hover:bg-bdg-minprimary/90 flex-1 h-13 min-h-[52px] gap-2 text-base font-semibold rounded-xl shadow-card disabled:opacity-40"
+          className="bg-bdg-primary hover:bg-bdg-minprimary/90 flex-1 h-13 min-h-[52px] gap-2 text-base font-semibold rounded-xl shadow-card text-white disabled:opacity-40"
         >
           Continue
           <ArrowRight className="h-4 w-4" />

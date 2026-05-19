@@ -30,7 +30,7 @@ export function OptionCard({ label, selected, onSelect, accentClass = "border-bd
       <div
         className={cn(
           "flex-shrink-0 h-6 w-6 rounded-full border-2 flex items-center justify-center transition-colors",
-          selected ? "border-current bg-current text-white" : "border-border"
+          selected ? "border-foreground bg-foreground text-background" : "border-border"
         )}
       >
         {selected && <Check className="h-4 w-4" strokeWidth={3} />}

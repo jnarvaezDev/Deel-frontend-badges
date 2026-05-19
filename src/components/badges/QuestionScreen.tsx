@@ -30,6 +30,12 @@ const ACCENT_BORDER = {
   leader: "border-leader bg-leader/5 text-leader",
 };
 
+const ACCENT_RING = {
+  talent: "ring-talent/30",
+  champion: "ring-champion/30",
+  leader: "ring-leader/30",
+};
+
 export function QuestionScreen({
   question,
   step,
@@ -108,8 +114,9 @@ export function QuestionScreen({
           onClick={onContinue}
           disabled={selectedIdx === -1}
           className={cn(
-            "bg-bdg-primary hover:bg-bdg-minprimary/90  flex-1 h-13 min-h-[52px] gap-2 text-base font-semibold rounded-xl shadow-card disabled:opacity-40",
-            ACCENT_BG[accentLevel], "text-white border-0 hover:opacity-90"
+            "bg-bdg-primary hover:bg-bdg-minprimary/90 flex-1 h-13 min-h-[52px] gap-2 text-base font-semibold rounded-xl shadow-card text-white border-0 ring-1 disabled:opacity-40",
+            ACCENT_RING[accentLevel],
+            "hover:opacity-90"
           )}
         >
           Continue

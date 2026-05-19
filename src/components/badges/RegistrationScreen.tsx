@@ -113,7 +113,7 @@ export function RegistrationScreen({ onContinue }: RegistrationScreenProps) {
       <Button
         size="lg"
         onClick={handleSubmit}
-        className="w-full h-14 text-base font-semibold gap-2 rounded-xl shadow-elevated"
+        className="w-full h-14 min-h-[52px] bg-bdg-primary hover:bg-bdg-minprimary/90 text-white border-0 text-base font-semibold gap-2 rounded-xl shadow-card whitespace-nowrap"
       >
         Continue
         <ArrowRight className="h-4 w-4" />
