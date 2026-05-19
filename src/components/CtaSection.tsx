@@ -1,5 +1,6 @@
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import ctaImage from "@/assets/cta-image.png";
+import { Link } from "react-router-dom";
 
 const CtaSection = () => {
   const content = useScrollReveal();
@@ -24,13 +25,13 @@ const CtaSection = () => {
             <p className="mt-3 text-base leading-6 text-primary-foreground/80">
               Get your certification and add your badge to LinkedIn.
             </p>
-            <button
-              onClick={handleLogin}
-              className="mt-5 h-[44px] px-7 rounded-full font-semibold text-sm transition-opacity hover:opacity-90 self-start"
+            <Link
+              to={`/app`}
+              className="mt-5 h-[44px] px-7 rounded-full font-semibold text-sm transition-opacity hover:opacity-90 self-start  flex items-center"
               style={{ backgroundColor: "#fcc400", color: "#111111" }}
             >
-              GET CERTIFIED
-            </button>
+              GET YOUR BADGE
+            </Link>
           </div>
 
           {/* Image right */}
