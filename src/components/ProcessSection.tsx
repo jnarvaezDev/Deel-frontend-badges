@@ -1,5 +1,5 @@
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
-import mockupImage from "@/assets/linkedin-mockup.png";
+import mockupImage from "@/assets/card-licences.png";
 
 const steps = [
   "Register on the landing page",

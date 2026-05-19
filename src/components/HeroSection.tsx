@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import heroImage from "@/assets/hero-image.gif";
+import heroImage from "@/assets/gif-licences.png";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 
 const HeroSection = () => {
