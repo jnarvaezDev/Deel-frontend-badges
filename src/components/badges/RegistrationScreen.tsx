@@ -1,9 +1,17 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ArrowRight, User, Mail, Briefcase, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { isBlockedPublicEmail } from "@/lib/badges/email";
+import { countries } from "@/lib/badges/countries";
 
 export interface RegistrationData {
   fullName: string;
@@ -68,7 +76,6 @@ export function RegistrationScreen({ onContinue }: RegistrationScreenProps) {
     { key: "fullName", label: "Full Name", placeholder: "Jane Doe", type: "text", icon: User },
     { key: "email", label: "Professional Email", placeholder: "jane@company.com", type: "email", icon: Mail },
     { key: "jobTitle", label: "Current Job Title", placeholder: "Head of Global Operations", type: "text", icon: Briefcase },
-    { key: "currentCountry", label: "Your current country", placeholder: "United States", type: "text", icon: MapPin },
   ];
 
   return (
@@ -108,6 +115,37 @@ export function RegistrationScreen({ onContinue }: RegistrationScreenProps) {
             )}
           </div>
         ))}
+
+        <div className="space-y-1.5">
+          <label className="text-sm font-medium text-foreground flex items-center gap-1.5">
+            <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
+            Your current country
+          </label>
+          <Select
+            value={form.currentCountry}
+            onValueChange={(value) => handleChange("currentCountry", value)}
+          >
+            <SelectTrigger
+              onBlur={() => handleBlur("currentCountry")}
+              className={cn(
+                "h-12 rounded-xl text-base",
+                touched.currentCountry && errors.currentCountry && "border-destructive focus:ring-destructive"
+              )}
+            >
+              <SelectValue placeholder="Select your country" />
+            </SelectTrigger>
+            <SelectContent>
+              {countries.map((country) => (
+                <SelectItem key={country.code} value={country.code}>
+                  {country.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {touched.currentCountry && errors.currentCountry && (
+            <p className="text-xs text-destructive">{errors.currentCountry}</p>
+          )}
+        </div>
       </div>
 
       <Button
