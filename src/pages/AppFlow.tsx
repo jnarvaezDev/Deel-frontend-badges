@@ -18,6 +18,11 @@ import { submitToWebhook, validateOpenText } from "@/lib/badges/webhook";
 import { captureLead } from "@/lib/badges/leads";
 import type { BadgeLevel, Intent, PathKey, ScoringResult, backendResponse } from "@/lib/badges/types";
 import { toast } from "sonner";
+import {
+  getStoredBrazilBranding,
+  isBrazilCountry,
+  USER_COUNTRY_STORAGE_KEY,
+} from "@/lib/branding";
 import "./../badge-theme.css";
 
 type Stage =
@@ -74,6 +79,7 @@ const AppFlow = () => {
   const [reroutedFrom, setReroutedFrom] = useState<PathKey | null>(null);
   const [processingFinished, setProcessingFinished] = useState(false);
   const [lockedInfo, setLockedInfo] = useState<LockedInfo | null>(null);
+  const [isBrazilBranding, setIsBrazilBranding] = useState(() => getStoredBrazilBranding());
 
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -128,6 +134,12 @@ const AppFlow = () => {
     if (data?.fullName) {
       localStorage.setItem("user_name", decodeURIComponent(data.fullName));
     }
+
+    if (data?.currentCountry) {
+      localStorage.setItem(USER_COUNTRY_STORAGE_KEY, data.currentCountry);
+    }
+
+    setIsBrazilBranding(isBrazilCountry(data.currentCountry));
 
     setRegistration(data);
   };
@@ -354,7 +366,7 @@ const AppFlow = () => {
 
   return (
     <div className="bdg-theme min-h-screen bg-bdg-background flex flex-col">
-      <Header />
+      <Header isBrazilBranding={isBrazilBranding} />
 
       <div className={ACCENT_BG[accent]} style={{ height: 220 }} />
 
@@ -452,7 +464,7 @@ const AppFlow = () => {
         </div>
       </main>
 
-      <Footer />
+      <Footer isBrazilBranding={isBrazilBranding} />
     </div>
   );
 };
