@@ -185,7 +185,7 @@ function ContinueButton({ disabled, onClick, label = "Continue" }: { disabled: b
       size="lg"
       onClick={onClick}
       disabled={disabled}
-      className="bg-bdg-primary hover:bg-bdg-primary/90 w-full h-13 min-h-[52px] gap-2 text-base font-semibold rounded-xl shadow-card disabled:opacity-40"
+      className="bg-bdg-primary hover:bg-bdg-primary/90 w-full h-12 sm:h-13 min-h-[48px] sm:min-h-[52px] gap-2 text-sm sm:text-base font-semibold rounded-xl shadow-card disabled:opacity-40"
     >
       {label}
       <ArrowRight className="h-4 w-4" />

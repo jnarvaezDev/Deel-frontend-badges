@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound.tsx";
 import AppFlow from "./pages/AppFlow.tsx";
 import VerifyPage from "./pages/VerifyPage";
 import Badges from "./pages/Badges.tsx";
+import TermsDisclaimers from "./pages/TermsDisclaimers.tsx";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/app" element={<AppFlow />} />
           <Route path="/badges" element={<Badges />} />
+          <Route path="/terms-disclaimers" element={<TermsDisclaimers />} />
           <Route path="/verify/:id" element={<VerifyPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

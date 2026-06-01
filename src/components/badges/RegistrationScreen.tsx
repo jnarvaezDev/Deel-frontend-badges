@@ -151,11 +151,24 @@ export function RegistrationScreen({ onContinue }: RegistrationScreenProps) {
       <Button
         size="lg"
         onClick={handleSubmit}
-        className="w-full h-14 min-h-[52px] bg-bdg-primary hover:bg-bdg-minprimary/90 text-white border-0 text-base font-semibold gap-2 rounded-xl shadow-card whitespace-nowrap"
+        className="w-full h-12 sm:h-14 min-h-[48px] sm:min-h-[52px] bg-bdg-primary hover:bg-bdg-minprimary/90 text-white border-0 text-sm sm:text-base font-semibold gap-2 rounded-xl shadow-card whitespace-nowrap"
       >
         Continue
         <ArrowRight className="h-4 w-4" />
       </Button>
+
+      <p className="text-center text-xs text-muted-foreground">
+        By continuing, you agree to our{" "}
+        <a
+          href="/terms-disclaimers"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline hover:text-foreground transition-colors"
+        >
+          Terms &amp; Disclaimers
+        </a>
+        .
+      </p>
     </div>
   );
 }

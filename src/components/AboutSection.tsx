@@ -21,7 +21,7 @@ const AboutSection = () => {
             className={`max-w-[520px] flex-shrink-0 scroll-hidden ${right.isVisible ? 'scroll-visible' : ''}`}
             style={{ transitionDelay: '0.2s' }}
           >
-            <p className="text-[13px] uppercase tracking-wider mb-3" style={{ color: '#faf4ee', fontFamily: 'Inter, sans-serif' }}>
+            <p className="text-[13px] uppercase tracking-wider mb-3" style={{ color: '#faf4ee', fontFamily: "'Bagoss Condensed', sans-serif" }}>
               WHO IS DEEL?
             </p>
             <h2 className="text-[28px] leading-[36px] lg:text-[40px] lg:leading-[48px] font-bold" style={{ color: '#faf4ee' }}>

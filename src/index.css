@@ -90,7 +90,7 @@
     font-weight: 500;
   }
 
-  button, a, [role="button"] {
+  button, [role="button"] {
     font-family: 'Bagoss Condensed', sans-serif;
   }
 }

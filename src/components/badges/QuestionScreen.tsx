@@ -102,7 +102,7 @@ export function QuestionScreen({
             variant="ghost"
             size="lg"
             onClick={onBack}
-            className="hover:bg-bdg-minprimary/90 gap-1 h-12 px-3 text-muted-foreground "
+            className="hover:bg-bdg-minprimary/90 gap-1 h-10 sm:h-12 px-2.5 sm:px-3 text-xs sm:text-sm text-muted-foreground"
             aria-label="Back"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -114,7 +114,7 @@ export function QuestionScreen({
           onClick={onContinue}
           disabled={selectedIdx === -1}
           className={cn(
-            "bg-bdg-primary hover:bg-bdg-minprimary/90 flex-1 h-13 min-h-[52px] gap-2 text-base font-semibold rounded-xl shadow-card text-white border-0 ring-1 disabled:opacity-40",
+            "bg-bdg-primary hover:bg-bdg-minprimary/90 flex-1 h-12 sm:h-13 min-h-[48px] sm:min-h-[52px] gap-2 text-sm sm:text-base font-semibold rounded-xl shadow-card text-white border-0 ring-1 disabled:opacity-40",
             ACCENT_RING[accentLevel],
             "hover:opacity-90"
           )}

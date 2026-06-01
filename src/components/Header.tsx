@@ -24,10 +24,10 @@ const Header = ({ isBrazilBranding }: HeaderProps) => {
   return (
     <header
       className="shadow-[0_2px_12px_rgba(0,0,0,0.06)] sticky top-0 z-50"
-      style={{ backgroundColor: brazilBranding ? "rgb(255, 206, 0)" : undefined }}
+      style={{ backgroundColor: brazilBranding ? "rgb(255, 206, 0)" : "#FFFFFF" }}
     >
       <div className="deel-container relative flex items-center justify-between h-[72px] gap-3">
-        <Link to="/" className="flex items-center gap-3">
+        <Link to="/" className="flex items-center gap-3 sm:gap-4">
           <img src={deelLogo} alt="Deel" className="h-6 sm:h-7" />
           {brazilBranding && <img src={nomadLogo} alt="Nomad" className="h-6 sm:h-7" />}
         </Link>
@@ -58,7 +58,7 @@ const Header = ({ isBrazilBranding }: HeaderProps) => {
         {isMobileMenuOpen && (
           <div
             className="sm:hidden absolute left-0 right-0 top-[72px] z-50 border-t shadow-md"
-            style={{ backgroundColor: brazilBranding ? "rgb(255, 206, 0)" : undefined }}
+            style={{ backgroundColor: brazilBranding ? "rgb(255, 206, 0)" : "#FFFFFF" }}
           >
             <div className="px-4 py-3 flex flex-col gap-2">
               <Link to="/badges" className={ctaClass} onClick={closeMenu}>

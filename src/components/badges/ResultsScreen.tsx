@@ -7,9 +7,13 @@ import { cn } from "@/lib/utils";
 
 interface ResultsScreenProps {
   result: ScoringResult;
+  isBrazilBranding?: boolean;
 }
 
-export function ResultsScreen({ result }: ResultsScreenProps) {
+const getCertifiedLabel = (badgeName: string, isBrazilBranding: boolean) =>
+  `${badgeName} Certified by Deel${isBrazilBranding ? " & Nomad" : ""}`;
+
+export function ResultsScreen({ result, isBrazilBranding = false }: ResultsScreenProps) {
 
 
   if (result.badge === "none") {
@@ -55,7 +59,9 @@ export function ResultsScreen({ result }: ResultsScreenProps) {
       <div className="flex flex-col items-center text-center gap-6 pt-4">
         <BadgeMedal level={result.badge} size="lg" />
         <div className="space-y-3 pt-4">
-          <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Deel Global Badge</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+            {getCertifiedLabel(meta.name, isBrazilBranding)}
+          </p>
           <h1 className={cn("text-3xl sm:text-4xl font-bold tracking-tight text-navy")}>
             {meta.tagline}
           </h1>

@@ -56,6 +56,8 @@ const ACCENT_BG = {
   leader: "bg-leader",
 };
 
+const NOMAD_BRANDING_BG = "bg-black";
+
 const AppFlow = () => {
   const isMobile = useIsMobile();
 
@@ -368,7 +370,7 @@ const AppFlow = () => {
     <div className="bdg-theme min-h-screen bg-bdg-background flex flex-col">
       <Header isBrazilBranding={isBrazilBranding} />
 
-      <div className={ACCENT_BG[accent]} style={{ height: 220 }} />
+      <div className={isBrazilBranding ? NOMAD_BRANDING_BG : ACCENT_BG[accent]} style={{ height: 220 }} />
 
       <main className="flex-1 container max-w-2xl py-6 sm:py-10 px-4 sm:px-6">
         <div className="deel-container flex justify-center" style={{ marginTop: -224 }}>
@@ -377,7 +379,10 @@ const AppFlow = () => {
             style={{ padding: "48px 40px 56px" }}
           >
             {stage === "welcome" && (
-              <WelcomeScreen onStart={() => setStage("registration")} />
+              <WelcomeScreen
+                onStart={() => setStage("registration")}
+                isBrazilBranding={isBrazilBranding}
+              />
             )}
 
             {stage === "registration" && (
@@ -454,7 +459,7 @@ const AppFlow = () => {
             )}
 
             {stage === "results" && result && (
-              <ResultsScreen result={result} />
+              <ResultsScreen result={result} isBrazilBranding={isBrazilBranding} />
             )}
 
             {stage === "locked" && lockedInfo && (

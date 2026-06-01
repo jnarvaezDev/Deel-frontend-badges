@@ -7,11 +7,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ExternalLink, Award, Loader2, AlertCircle, Inbox } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { BadgeMedal } from "../components/badges/BadgeMedal";
+import { isBrazilCountry, USER_COUNTRY_STORAGE_KEY } from "@/lib/branding";
 
 interface BadgeRecord {
   id: number;
   name: string;
   email: string;
+  current_country?: string | null;
   score: number;
   tier: string;
   vb_validation_url: string;
@@ -35,8 +37,21 @@ const tierDisplayMapMeta = {
   "Global Leader": "leader",
 } as const;
 
+const TIER_DESCRIPTIONS: Record<string, string> = {
+  "Global Leader":
+    "Construyendo las bases del trabajo internacional. Reconocido por experiencia global en etapa inicial, trabajando entre fronteras y culturas.",
+  "Global Talent":
+    "Experiencia verificada trabajando y operando en múltiples países. Un profesional con capacidades comprobadas para desenvolverse en entornos internacionales.",
+  "Global Champion":
+    "Reconocido por liderar equipos e impulsar operaciones a través de diferentes países y zonas horarias. Un líder global certificado sin fronteras.",
+};
+
 function getTierStyle(tier: string) {
   return TIER_STYLES[tier] ?? { bg: "bg-primary/10", text: "text-primary", gradient: "bg-primary" };
+}
+
+function getTierDisplayName(tier: string, isBrazilBranding: boolean) {
+  return `${tier} | Certified by Deel${isBrazilBranding ? " & Nomad" : ""}`;
 }
 
 export default function Badges() {
@@ -45,6 +60,7 @@ export default function Badges() {
   const [badges, setBadges] = useState<BadgeRecord[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isBrazilBranding, setIsBrazilBranding] = useState(false);
 
   const fetchBadges = useCallback(async (userEmail: string) => {
     setLoading(true);
@@ -56,9 +72,20 @@ export default function Badges() {
       if (!res.ok) throw new Error("Failed to fetch badges");
       const json: BadgesResponse = await res.json();
       setBadges(json.data);
+
+      const latestCountry = json.data?.[0]?.current_country ?? "";
+      setIsBrazilBranding(isBrazilCountry(latestCountry));
+
+      if (latestCountry) {
+        localStorage.setItem(USER_COUNTRY_STORAGE_KEY, latestCountry);
+      } else {
+        localStorage.removeItem(USER_COUNTRY_STORAGE_KEY);
+      }
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : "Something went wrong";
       setError(message);
+      setIsBrazilBranding(false);
+      localStorage.removeItem(USER_COUNTRY_STORAGE_KEY);
     } finally {
       setLoading(false);
     }
@@ -72,13 +99,16 @@ export default function Badges() {
     e.preventDefault();
     const trimmed = emailInput.trim();
     if (!trimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) return;
+
     localStorage.setItem("user_email", trimmed);
+    setIsBrazilBranding(false);
+    localStorage.removeItem(USER_COUNTRY_STORAGE_KEY);
     setEmail(trimmed);
   };
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <Header isBrazilBranding={isBrazilBranding} />
       <div style={{ backgroundColor: "#1a1145", height: 220 }} />
 
       <main className="container max-w-3xl py-8 px-4 space-y-6 min-h-screen" style={{
@@ -130,6 +160,7 @@ export default function Badges() {
               size="sm"
               onClick={() => {
                 localStorage.removeItem("user_email");
+                setIsBrazilBranding(false);
                 setEmail("");
                 setBadges(null);
               }}
@@ -151,9 +182,14 @@ export default function Badges() {
                       <div className="flex items-center gap-2 flex-wrap">
                         <h3 className="font-semibold text-navy">{b.name}</h3>
                         <span className={cn("px-2.5 py-0.5 rounded-full text-xs font-semibold", style.bg, style.text)}>
-                          {b.tier}
+                          {getTierDisplayName(b.tier, isBrazilBranding)}
                         </span>
                       </div>
+                      {TIER_DESCRIPTIONS[b.tier] && (
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          {TIER_DESCRIPTIONS[b.tier]}
+                        </p>
+                      )}
                       <div className="flex items-center gap-3 text-xs text-muted-foreground">
                         <span>Score: {b.score}</span>
                         <span>·</span>
@@ -174,6 +210,7 @@ export default function Badges() {
               <button
                 onClick={() => {
                   localStorage.removeItem("user_email");
+                  setIsBrazilBranding(false);
                   setEmail("");
                   setBadges(null);
                 }}
@@ -185,7 +222,7 @@ export default function Badges() {
           </div>
         )}
       </main>
-      <Footer />
+      <Footer isBrazilBranding={isBrazilBranding} />
     </div>
   );
 }

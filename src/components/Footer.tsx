@@ -1,6 +1,7 @@
 import deelLogo from "@/assets/deel-logo-white.svg";
 import nomadLogo from "@/assets/Nomad_idByCy3wYR_1.svg";
 import { getStoredBrazilBranding } from "@/lib/branding";
+import { Link } from "react-router-dom";
 
 interface FooterProps {
   isBrazilBranding?: boolean;
@@ -15,13 +16,17 @@ const socialIcons = [
 ];
 
 const legalLinks = [
-  { label: "Disclaimer", href: "https://www.deel.com/legal/disclaimer/" },
   { label: "Privacy Policy", href: "https://www.deel.com/legal/privacy-policy/" },
   { label: "LLM Info", href: "https://www.deel.com/llm-info/" },
   { label: "Disclosures", href: "https://www.deel.com/legal/disclosures/" },
   { label: "Legal Hub", href: "https://www.deel.com/legal/" },
   { label: "Licenses and Compliance", href: "https://www.deel.com/legal/licenses/" },
 ];
+
+const termsAndDisclaimersLink = {
+  label: "Terms & Disclaimers",
+  href: "/terms-disclaimers",
+};
 
 const Footer = ({ isBrazilBranding }: FooterProps) => {
   const brazilBranding = isBrazilBranding ?? getStoredBrazilBranding();
@@ -85,12 +90,24 @@ const Footer = ({ isBrazilBranding }: FooterProps) => {
           <span style={{ fontSize: 12, color: "#6B6B6B" }}>
             © Copyright 2026. All Rights Reserved.
           </span>
-          <div className="flex flex-wrap gap-6">
+          <div className="flex flex-col items-start gap-3">
+            <Link
+              to={termsAndDisclaimersLink.href}
+              className="transition-colors duration-200 font-semibold"
+              style={{ fontSize: 14, color: "#FFFFFF", textDecoration: "underline" }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "#D1D1D1")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "#FFFFFF")}
+            >
+              {termsAndDisclaimersLink.label}
+            </Link>
+
+            <div className="flex flex-wrap gap-6">
             {legalLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
-                target= "_blank"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="transition-colors duration-200"
                 style={{ fontSize: 12, color: "#6B6B6B", textDecoration: "none" }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "#FFFFFF")}
@@ -99,6 +116,7 @@ const Footer = ({ isBrazilBranding }: FooterProps) => {
                 {link.label}
               </a>
             ))}
+            </div>
           </div>
         </div>
       </div>
