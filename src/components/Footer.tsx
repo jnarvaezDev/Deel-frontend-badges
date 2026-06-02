@@ -43,7 +43,7 @@ const Footer = ({ isBrazilBranding }: FooterProps) => {
       >
         {/* Top: Logo + Social stacked */}
         <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-3">
+          <div className={`flex items-center ${brazilBranding ? "gap-5 sm:gap-7" : "gap-3"}`}>
             <img src={deelLogo} alt="Deel" className="h-7 w-auto self-start" />
             {brazilBranding && (
               <img
