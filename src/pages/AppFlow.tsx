@@ -129,12 +129,14 @@ const AppFlow = () => {
   };
 
   const handleRegistration = (data: RegistrationData) => {
+    const fullName = `${data.firstName} ${data.lastName}`.trim();
+
     if (data?.email) {
       localStorage.setItem("user_email", decodeURIComponent(data.email));
     }
 
-    if (data?.fullName) {
-      localStorage.setItem("user_name", decodeURIComponent(data.fullName));
+    if (fullName) {
+      localStorage.setItem("user_name", decodeURIComponent(fullName));
     }
 
     if (data?.currentCountry) {
@@ -290,7 +292,8 @@ const AppFlow = () => {
     };
 
     const payload = {
-      name: registration?.fullName ?? "",
+      firstName: registration?.firstName ?? "",
+      lastName: registration?.lastName ?? "",
       email: registration?.email ?? "",
       currentJobTitle: registration?.jobTitle ?? "",
       currentCountry: registration?.currentCountry ?? "",
@@ -391,7 +394,8 @@ const AppFlow = () => {
                   handleRegistration(data);
 
                   void captureLead({
-                    name: data.fullName,
+                    firstName: data.firstName,
+                    lastName: data.lastName,
                     email: data.email,
                     currentJobTitle: data.jobTitle,
                     currentCountry: data.currentCountry,

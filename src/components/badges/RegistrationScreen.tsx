@@ -14,7 +14,8 @@ import { isBlockedPublicEmail } from "@/lib/badges/email";
 import { countries } from "@/lib/badges/countries";
 
 export interface RegistrationData {
-  fullName: string;
+  firstName: string;
+  lastName: string;
   email: string;
   jobTitle: string;
   currentCountry: string;
@@ -28,7 +29,8 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function RegistrationScreen({ onContinue }: RegistrationScreenProps) {
   const [form, setForm] = useState<RegistrationData>({
-    fullName: "",
+    firstName: "",
+    lastName: "",
     email: "",
     jobTitle: "",
     currentCountry: "",
@@ -36,7 +38,8 @@ export function RegistrationScreen({ onContinue }: RegistrationScreenProps) {
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const errors = {
-    fullName: !form.fullName.trim() ? "Full name is required" : "",
+    firstName: !form.firstName.trim() ? "First name is required" : "",
+    lastName: !form.lastName.trim() ? "Last name is required" : "",
     email: !form.email.trim()
       ? "Professional email is required"
       : !EMAIL_REGEX.test(form.email.trim())
@@ -60,7 +63,7 @@ export function RegistrationScreen({ onContinue }: RegistrationScreenProps) {
 
   const handleSubmit = () => {
     if (!isValid) {
-      setTouched({ fullName: true, email: true, jobTitle: true, currentCountry: true });
+      setTouched({ firstName: true, lastName: true, email: true, jobTitle: true, currentCountry: true });
       return;
     }
     onContinue(form);
@@ -73,7 +76,8 @@ export function RegistrationScreen({ onContinue }: RegistrationScreenProps) {
     type: string;
     icon: typeof User;
   }[] = [
-    { key: "fullName", label: "Full Name", placeholder: "Jane Doe", type: "text", icon: User },
+    { key: "firstName", label: "First Name", placeholder: "Jane", type: "text", icon: User },
+    { key: "lastName", label: "Last Name", placeholder: "Doe", type: "text", icon: User },
     { key: "email", label: "Professional Email", placeholder: "jane@company.com", type: "email", icon: Mail },
     { key: "jobTitle", label: "Current Job Title", placeholder: "Head of Global Operations", type: "text", icon: Briefcase },
   ];

@@ -1,5 +1,6 @@
 export async function captureLead(payload: {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   currentJobTitle: string;
   currentCountry: string;
