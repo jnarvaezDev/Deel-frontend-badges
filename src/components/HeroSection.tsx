@@ -34,7 +34,7 @@ const HeroSection = () => {
 
               <Link
                 to={`/app`}
-                className="h-[48px] px-6 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-opacity w-full sm:w-auto flex items-center"
+                className="h-[48px] px-6 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-opacity w-full sm:w-auto flex items-center justify-center"
               >
                 GET YOUR BADGE
               </Link>
