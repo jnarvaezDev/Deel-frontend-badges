@@ -154,7 +154,7 @@ export default function Badges() {
         ) : badges && badges.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 gap-3 text-muted-foreground">
             <Inbox className="h-8 w-8" />
-            <p className="text-sm">No badges found for <strong>{email}</strong>.</p>
+            <p className="text-sm text-center">No badges found for <strong>{email}</strong>.</p>
             <Button
               variant="outline"
               size="sm"
