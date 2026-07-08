@@ -1,26 +1,28 @@
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 
 const levels = [
+
   {
     number: 1,
-    title: "Global Leader",
-    description: "Professionals who regularly collaborate across countries, cultures, or time zones.",
-    skills: ["All global talent skills AND", "Coordination with international teams", "Responsibility in distributed projects", "Frequent collaboration across borders"],
-    borderColor: "#a88ee8",
-  },
-  {
-    number: 2,
     title: "Global Talent",
     description: "Professionals who already work or have worked with international companies.",
-    skills: ["All global potential skills AND", "Experience collaborating with global teams", "Participation in cross-border projects", "Work experience in international organizations"],
+    skills: ["Experience collaborating with global teams", "Participation in cross-border projects", "Work experience in international organizations"],
     borderColor: "#5938b7",
+  },
+
+  {
+    number: 2,
+    title: "Global Champion",
+    description: "Professionals with extensive experience operating in global environments.",
+    skills: ["All global talent skills AND", "Experience building international teams or systems", "Participation in building global operations", "Advanced experience working across multiple regions"],
+    borderColor: "#ed5e2a",
   },
   {
     number: 3,
-    title: "Global Champion",
-    description: "Professionals with extensive experience operating in global environments.",
-    skills: ["All global leader skills AND", "Experience building international teams or systems", "Participation in building global operations", "Advanced experience working across multiple regions"],
-    borderColor: "#ed5e2a",
+    title: "Global Leader",
+    description: "Professionals who regularly collaborate across countries, cultures, or time zones.",
+    skills: ["All global champion skills AND", "Coordination with international teams", "Responsibility in distributed projects", "Frequent collaboration across borders"],
+    borderColor: "#a88ee8",
   },
 ];
 

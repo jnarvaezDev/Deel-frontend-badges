@@ -22,7 +22,7 @@ const HeroSection = () => {
             className={`max-w-[520px] flex-shrink-0 scroll-hidden ${left.isVisible ? 'scroll-visible' : ''}`}
           >
             <h1 className="text-[40px] leading-[48px] lg:text-[56px] lg:leading-[64px] font-bold text-foreground">
-              Stand out on LinkedIn for international opportunities
+              Certifications for Global Careers
             </h1>
             <p className="mt-6 text-base leading-6 text-muted-foreground">
               Deel Global Badges certify your readiness to work globally so recruiters can find you.
