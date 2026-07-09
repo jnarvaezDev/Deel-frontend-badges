@@ -17,3 +17,14 @@ export function getStoredCountry(): string {
 export function getStoredBrazilBranding(): boolean {
   return isBrazilCountry(getStoredCountry());
 }
+
+export function getBrazilBrandingOverride(search: string): string | null {
+  const params = new URLSearchParams(search);
+  const brand = params.get("brand");
+  const country = params.get("country");
+
+  if (brand?.trim().toLowerCase() === "nomad") return "BR";
+  if (isBrazilCountry(country)) return "BR";
+
+  return null;
+}

@@ -19,6 +19,7 @@ import { captureLead } from "@/lib/badges/leads";
 import type { BadgeLevel, Intent, PathKey, ScoringResult, backendResponse } from "@/lib/badges/types";
 import { toast } from "sonner";
 import {
+  getBrazilBrandingOverride,
   getStoredBrazilBranding,
   isBrazilCountry,
   USER_COUNTRY_STORAGE_KEY,
@@ -57,6 +58,7 @@ const ACCENT_BG = {
 };
 
 const NOMAD_BRANDING_BG = "bg-black";
+const GEO_BRANDING_TIMEOUT_MS = 3000;
 
 const AppFlow = () => {
   const isMobile = useIsMobile();
@@ -82,12 +84,63 @@ const AppFlow = () => {
   const [processingFinished, setProcessingFinished] = useState(false);
   const [lockedInfo, setLockedInfo] = useState<LockedInfo | null>(null);
   const [isBrazilBranding, setIsBrazilBranding] = useState(() => getStoredBrazilBranding());
+  const [brandingReady, setBrandingReady] = useState(() => getStoredBrazilBranding());
 
   const API_URL = import.meta.env.VITE_API_URL;
 
   const questions = useMemo(() => (path ? getQuestionsForPath(path) : []), [path]);
 
   const totalSteps = path ? 1 + questions.length + 3 : 1;
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const applyBrazilBranding = (country: string) => {
+      localStorage.setItem(USER_COUNTRY_STORAGE_KEY, country);
+      setIsBrazilBranding(true);
+    };
+
+    const overrideCountry = getBrazilBrandingOverride(window.location.search);
+
+    if (overrideCountry) {
+      applyBrazilBranding(overrideCountry);
+      setBrandingReady(true);
+      return;
+    }
+
+    if (getStoredBrazilBranding()) {
+      setBrandingReady(true);
+      return;
+    }
+
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), GEO_BRANDING_TIMEOUT_MS);
+    const geoApiUrl = `${API_URL.replace(/\/$/, "")}/api/geo`;
+
+    fetch(geoApiUrl, { signal: controller.signal })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data: { country?: string | null; isBrazil?: boolean } | null) => {
+        if (!isMounted) return;
+
+        if (data?.isBrazil) {
+          applyBrazilBranding(data.country ?? "BR");
+        }
+      })
+      .catch((error) => {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        console.warn("[geo] Failed to detect visitor country", error);
+      })
+      .finally(() => {
+        window.clearTimeout(timeoutId);
+        if (isMounted) setBrandingReady(true);
+      });
+
+    return () => {
+      isMounted = false;
+      controller.abort();
+      window.clearTimeout(timeoutId);
+    };
+  }, [API_URL]);
 
   const currentStep = (() => {
     if (stage === "entry") return 1;
@@ -105,6 +158,10 @@ const AppFlow = () => {
       setStage("results");
     }
   }, [stage, result, processingFinished]);
+
+  if (!brandingReady) {
+    return <div className="bdg-theme min-h-screen bg-bdg-background" />;
+  }
 
   const reset = () => {
     setStage("welcome");

@@ -1,8 +1,10 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { useState } from "react";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { getBrazilBrandingOverride, USER_COUNTRY_STORAGE_KEY } from "@/lib/branding";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import AppFlow from "./pages/AppFlow.tsx";
@@ -12,23 +14,35 @@ import TermsDisclaimers from "./pages/TermsDisclaimers.tsx";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/app" element={<AppFlow />} />
-          <Route path="/badges" element={<Badges />} />
-          <Route path="/terms-disclaimers" element={<TermsDisclaimers />} />
-          <Route path="/verify/:id" element={<VerifyPage />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  const [brandingOverrideApplied] = useState(() => {
+    const overrideCountry = getBrazilBrandingOverride(window.location.search);
+    if (overrideCountry) {
+      localStorage.setItem(USER_COUNTRY_STORAGE_KEY, overrideCountry);
+    }
+
+    return Boolean(overrideCountry);
+  });
+  void brandingOverrideApplied;
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/app" element={<AppFlow />} />
+            <Route path="/badges" element={<Badges />} />
+            <Route path="/terms-disclaimers" element={<TermsDisclaimers />} />
+            <Route path="/verify/:id" element={<VerifyPage />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
