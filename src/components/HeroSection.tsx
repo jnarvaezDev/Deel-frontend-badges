@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
 import heroImage from "@/assets/gif-licences.png";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
+import { getStoredBrazilBranding } from "@/lib/branding";
 
 const HeroSection = () => {
   const left = useScrollReveal();
   const right = useScrollReveal();
+  const brazilBranding = getStoredBrazilBranding();
 
   const handleScroll = () => {
   const section = document.getElementById("certification-levels");
@@ -25,7 +27,9 @@ const HeroSection = () => {
               Certifications for Global Careers
             </h1>
             <p className="mt-6 text-base leading-6 text-muted-foreground">
-              Deel Global Badges certify your readiness to work globally so recruiters can find you.
+              {brazilBranding
+                ? "Deel & Nomad certify your readiness to work globally so recruiters can find you."
+                : "Deel Global Badges certify your readiness to work globally so recruiters can find you."}
             </p>
             <p className="mt-3 text-base leading-6 text-muted-foreground">
               From global potential to global leadership: find the badge that matches your experience.

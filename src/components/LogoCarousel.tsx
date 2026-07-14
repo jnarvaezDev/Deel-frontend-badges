@@ -23,6 +23,7 @@ import rollsroyce from "@/assets/logos/rollsroyce.svg";
 import re from "@/assets/logos/re.svg";
 import iee from "@/assets/logos/iee.svg";
 import verizon from "@/assets/logos/verizon.svg";
+import { getStoredBrazilBranding } from "@/lib/branding";
 
 const row1 = [
   { src: balenciaga, alt: "Balenciaga", height: 12 },
@@ -88,6 +89,8 @@ const LogoRow = ({
 );
 
 const LogoCarousel = () => {
+  const brazilBranding = getStoredBrazilBranding();
+
   return (
     <section className="py-10 lg:py-14 overflow-hidden">
       <div className="deel-container">
@@ -95,7 +98,9 @@ const LogoCarousel = () => {
           className="text-[12px] uppercase tracking-[0.1em] text-center mb-8 font-medium"
           style={{ color: "#1b1b1b" }}
         >
-          Trusted by thousands of companies worldwide to scale global teams without limits.
+          {brazilBranding
+            ? "Deel is Trusted by thousands of companies worldwide to scale global teams without limits."
+            : "Trusted by thousands of companies worldwide to scale global teams without limits."}
         </p>
       </div>
       <div className="flex flex-col gap-6">

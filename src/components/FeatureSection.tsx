@@ -1,9 +1,11 @@
 import badgeVideo from "@/assets/video-badge.mp4";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
+import { getStoredBrazilBranding } from "@/lib/branding";
 
 const FeatureSection = () => {
   const textBlock = useScrollReveal();
   const videoBlock = useScrollReveal();
+  const brazilBranding = getStoredBrazilBranding();
 
   return (
     <section className="deel-container pb-24 lg:pb-24 md:pb-[72px]">
@@ -23,7 +25,9 @@ const FeatureSection = () => {
         <div className="relative z-10 flex flex-col lg:flex-row gap-8 lg:gap-12">
           <div className="flex-1">
             <h2 className="text-[28px] leading-[36px] lg:text-[40px] lg:leading-[48px] font-bold" style={{ color: "#faf4ee" }}>
-              Deel Global Badges are certifications that validate your ability to work globally
+              {brazilBranding
+                ? "Deel and Nomad Badges are certification that validate your ability to work globally"
+                : "Deel Global Badges are certifications that validate your ability to work globally"}
             </h2>
           </div>
           <div className="flex-1 flex flex-col gap-4">

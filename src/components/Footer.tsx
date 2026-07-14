@@ -20,6 +20,8 @@ const termsAndDisclaimersLink = {
   href: "/terms-disclaimers",
 };
 
+const NOMAD_URL = "https://www.nomadglobal.com";
+
 const Footer = ({ isBrazilBranding }: FooterProps) => {
   const brazilBranding = isBrazilBranding ?? getStoredBrazilBranding();
 
@@ -36,14 +38,18 @@ const Footer = ({ isBrazilBranding }: FooterProps) => {
         {/* Top: Logo + Social stacked */}
         <div className="flex flex-col gap-4">
           <div className={`flex items-center ${brazilBranding ? "gap-5 sm:gap-7" : "gap-3"}`}>
-            <img src={deelLogo} alt="Deel" className="h-7 w-auto self-start" />
+            <Link to="/" aria-label="Go to home">
+              <img src={deelLogo} alt="Deel" className="h-7 w-auto self-start" />
+            </Link>
             {brazilBranding && (
-              <img
-                src={nomadLogo}
-                alt="Nomad"
-                className="h-6 w-auto self-start"
-                style={{ filter: "brightness(0) invert(1)" }}
-              />
+              <a href={NOMAD_URL} target="_blank" rel="noopener noreferrer" aria-label="Visit Nomad Global">
+                <img
+                  src={nomadLogo}
+                  alt="Nomad"
+                  className="h-6 w-auto self-start"
+                  style={{ filter: "brightness(0) invert(1)" }}
+                />
+              </a>
             )}
           </div>
         </div>

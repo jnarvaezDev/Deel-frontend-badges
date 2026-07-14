@@ -9,6 +9,8 @@ interface HeaderProps {
   isBrazilBranding?: boolean;
 }
 
+const NOMAD_URL = "https://www.nomadglobal.com";
+
 const Header = ({ isBrazilBranding }: HeaderProps) => {
   const brazilBranding = isBrazilBranding ?? getStoredBrazilBranding();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -27,13 +29,16 @@ const Header = ({ isBrazilBranding }: HeaderProps) => {
       style={{ backgroundColor: brazilBranding ? "rgb(255, 206, 0)" : "#FFFFFF" }}
     >
       <div className="deel-container relative flex items-center justify-between h-[72px] gap-3">
-        <Link
-          to="/"
-          className={`flex items-center ${brazilBranding ? "gap-5 sm:gap-7" : "gap-3 sm:gap-4"}`}
-        >
-          <img src={deelLogo} alt="Deel" className="h-6 sm:h-7" />
-          {brazilBranding && <img src={nomadLogo} alt="Nomad" className="h-6 sm:h-7" />}
-        </Link>
+        <div className={`flex items-center ${brazilBranding ? "gap-5 sm:gap-7" : "gap-3 sm:gap-4"}`}>
+          <Link to="/" aria-label="Go to home">
+            <img src={deelLogo} alt="Deel" className="h-6 sm:h-7" />
+          </Link>
+          {brazilBranding && (
+            <a href={NOMAD_URL} target="_blank" rel="noopener noreferrer" aria-label="Visit Nomad Global">
+              <img src={nomadLogo} alt="Nomad" className="h-6 sm:h-7" />
+            </a>
+          )}
+        </div>
 
         <div className="hidden sm:flex items-center gap-3">
           <Link to="/badges" className={ctaClass}>

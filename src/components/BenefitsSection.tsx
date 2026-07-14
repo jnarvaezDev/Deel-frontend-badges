@@ -2,6 +2,7 @@ import benefitImage from "@/assets/prueba-benefit-BMik2FpY.png";
 import recruiterVisibilityImage from "@/assets/visibilidad-benefit-Dj7TA8Hh.png";
 import validacionImage from "@/assets/validacion-benefit.png";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
+import { getStoredBrazilBranding } from "@/lib/branding";
 
 const benefits = [
 "Clear validation of global experience",
@@ -12,6 +13,7 @@ const benefits = [
 const BenefitsSection = () => {
   const header = useScrollReveal();
   const grid = useScrollReveal();
+  const brazilBranding = getStoredBrazilBranding();
 
   return (
     <section className="bg-deel-gray-bg section-spacing">
@@ -20,7 +22,10 @@ const BenefitsSection = () => {
           ref={header.ref}
           className={`text-center max-w-[640px] mx-auto scroll-hidden ${header.isVisible ? 'scroll-visible' : ''}`}>
           
-          <h2 className="text-[28px] leading-[36px] lg:text-[40px] lg:leading-[48px] font-bold text-foreground">Adding a badge helps make your international experience visible
+          <h2 className="text-[28px] leading-[36px] lg:text-[40px] lg:leading-[48px] font-bold text-foreground">
+            {brazilBranding
+              ? "One badge. Your global experience, on display."
+              : "Adding a badge helps make your international experience visible"}
 
           </h2>
         </div>
