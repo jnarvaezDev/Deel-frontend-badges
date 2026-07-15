@@ -83,6 +83,9 @@ export function RegistrationScreen({ onContinue }: RegistrationScreenProps) {
   }[] = [
     { key: "firstName", label: "First Name", placeholder: "Jane", type: "text", icon: User },
     { key: "lastName", label: "Last Name", placeholder: "Doe", type: "text", icon: User },
+  ];
+
+  const remainingFields: typeof fields = [
     {
       key: "email",
       label: requiresProfessionalEmail(form.employmentStatus) ? "Professional Email" : "Email",
@@ -154,6 +157,29 @@ export function RegistrationScreen({ onContinue }: RegistrationScreenProps) {
               : "You can use a personal email while unemployed."}
           </p>
         </div>
+
+        {remainingFields.map(({ key, label, placeholder, type, icon: Icon }) => (
+          <div key={key} className="space-y-1.5">
+            <label className="text-sm font-medium text-foreground flex items-center gap-1.5">
+              <Icon className="h-3.5 w-3.5 text-muted-foreground" />
+              {label}
+            </label>
+            <Input
+              type={type}
+              placeholder={placeholder}
+              value={form[key]}
+              onChange={(e) => handleChange(key, e.target.value)}
+              onBlur={() => handleBlur(key)}
+              className={cn(
+                "h-12 rounded-xl text-base",
+                touched[key] && errors[key] && "border-destructive focus-visible:ring-destructive"
+              )}
+            />
+            {touched[key] && errors[key] && (
+              <p className="text-xs text-destructive">{errors[key]}</p>
+            )}
+          </div>
+        ))}
 
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-foreground flex items-center gap-1.5">
