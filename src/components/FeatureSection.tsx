@@ -1,4 +1,5 @@
 import badgeVideo from "@/assets/video-badge.mp4";
+import badgeVideoMobile from "@/assets/video-badge-mobile.mp4";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { getStoredBrazilBranding } from "@/lib/branding";
 
@@ -57,6 +58,7 @@ const FeatureSection = () => {
           className="w-full h-auto rounded-[20px]"
           style={{ margin: '0 -1px', width: 'calc(100% + 2px)', maxWidth: 'none' }}
         >
+          <source media="(max-width: 767px)" src={badgeVideoMobile} type="video/mp4" />
           <source src={badgeVideo} type="video/mp4" />
         </video>
       </div>
