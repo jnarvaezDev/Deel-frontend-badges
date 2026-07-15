@@ -1,7 +1,10 @@
+import type { EmploymentStatus } from "./types";
+
 export async function captureLead(payload: {
   firstName: string;
   lastName: string;
   email: string;
+  employmentStatus: EmploymentStatus;
   currentJobTitle: string;
   currentCountry: string;
 }) {

@@ -10,13 +10,15 @@ import {
 } from "@/components/ui/select";
 import { ArrowRight, User, Mail, Briefcase, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { isBlockedPublicEmail } from "@/lib/badges/email";
+import { isBlockedPublicEmail, requiresProfessionalEmail } from "@/lib/badges/email";
 import { countries } from "@/lib/badges/countries";
+import type { EmploymentStatus } from "@/lib/badges/types";
 
 export interface RegistrationData {
   firstName: string;
   lastName: string;
   email: string;
+  employmentStatus: EmploymentStatus;
   jobTitle: string;
   currentCountry: string;
 }
@@ -32,6 +34,7 @@ export function RegistrationScreen({ onContinue }: RegistrationScreenProps) {
     firstName: "",
     lastName: "",
     email: "",
+    employmentStatus: "employed",
     jobTitle: "",
     currentCountry: "",
   });
@@ -41,10 +44,12 @@ export function RegistrationScreen({ onContinue }: RegistrationScreenProps) {
     firstName: !form.firstName.trim() ? "First name is required" : "",
     lastName: !form.lastName.trim() ? "Last name is required" : "",
     email: !form.email.trim()
-      ? "Professional email is required"
+      ? requiresProfessionalEmail(form.employmentStatus)
+        ? "Professional email is required"
+        : "Email is required"
       : !EMAIL_REGEX.test(form.email.trim())
       ? "Enter a valid email address"
-      : isBlockedPublicEmail(form.email)
+      : requiresProfessionalEmail(form.employmentStatus) && isBlockedPublicEmail(form.email)
       ? "Please enter your professional email (personal domains are not allowed)"
       : "",
     jobTitle: !form.jobTitle.trim() ? "Job title is required" : "",
@@ -63,14 +68,14 @@ export function RegistrationScreen({ onContinue }: RegistrationScreenProps) {
 
   const handleSubmit = () => {
     if (!isValid) {
-      setTouched({ firstName: true, lastName: true, email: true, jobTitle: true, currentCountry: true });
+      setTouched({ firstName: true, lastName: true, email: true, employmentStatus: true, jobTitle: true, currentCountry: true });
       return;
     }
     onContinue(form);
   };
 
   const fields: {
-    key: keyof RegistrationData;
+    key: "firstName" | "lastName" | "email" | "jobTitle";
     label: string;
     placeholder: string;
     type: string;
@@ -78,7 +83,13 @@ export function RegistrationScreen({ onContinue }: RegistrationScreenProps) {
   }[] = [
     { key: "firstName", label: "First Name", placeholder: "Jane", type: "text", icon: User },
     { key: "lastName", label: "Last Name", placeholder: "Doe", type: "text", icon: User },
-    { key: "email", label: "Professional Email", placeholder: "jane@company.com", type: "email", icon: Mail },
+    {
+      key: "email",
+      label: requiresProfessionalEmail(form.employmentStatus) ? "Professional Email" : "Email",
+      placeholder: requiresProfessionalEmail(form.employmentStatus) ? "jane@company.com" : "jane@gmail.com",
+      type: "email",
+      icon: Mail,
+    },
     { key: "jobTitle", label: "Current Job Title", placeholder: "Head of Global Operations", type: "text", icon: Briefcase },
   ];
 
@@ -119,6 +130,30 @@ export function RegistrationScreen({ onContinue }: RegistrationScreenProps) {
             )}
           </div>
         ))}
+
+        <div className="space-y-1.5">
+          <label className="text-sm font-medium text-foreground flex items-center gap-1.5">
+            <Briefcase className="h-3.5 w-3.5 text-muted-foreground" />
+            Employment status
+          </label>
+          <Select
+            value={form.employmentStatus}
+            onValueChange={(value: EmploymentStatus) => handleChange("employmentStatus", value)}
+          >
+            <SelectTrigger className="h-12 rounded-xl text-base">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="employed">Employed</SelectItem>
+              <SelectItem value="unemployed">Unemployed</SelectItem>
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-muted-foreground">
+            {requiresProfessionalEmail(form.employmentStatus)
+              ? "Use your work email to verify professional status."
+              : "You can use a personal email while unemployed."}
+          </p>
+        </div>
 
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-foreground flex items-center gap-1.5">

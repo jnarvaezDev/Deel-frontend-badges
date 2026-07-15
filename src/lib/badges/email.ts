@@ -1,3 +1,5 @@
+import type { EmploymentStatus } from "./types";
+
 export const BLOCKED_PUBLIC_EMAIL_DOMAINS = new Set([
   "gmail.com",
   "yahoo.com",
@@ -18,4 +20,8 @@ export const BLOCKED_PUBLIC_EMAIL_DOMAINS = new Set([
 export function isBlockedPublicEmail(email: string) {
   const domain = email.trim().toLowerCase().split("@")[1] ?? "";
   return BLOCKED_PUBLIC_EMAIL_DOMAINS.has(domain);
+}
+
+export function requiresProfessionalEmail(employmentStatus: EmploymentStatus) {
+  return employmentStatus === "employed";
 }

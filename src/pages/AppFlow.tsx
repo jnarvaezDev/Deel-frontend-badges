@@ -290,6 +290,7 @@ const AppFlow = () => {
       firstName: registration?.firstName ?? "",
       lastName: registration?.lastName ?? "",
       email: registration?.email ?? "",
+      employmentStatus: registration?.employmentStatus ?? "employed",
       currentJobTitle: registration?.jobTitle ?? "",
       currentCountry: registration?.currentCountry ?? "",
       jobTitle: registration?.jobTitle ?? "",
@@ -351,6 +352,7 @@ const AppFlow = () => {
 
     void submitToWebhook({
       path,
+      employmentStatus: registration?.employmentStatus ?? "employed",
       entryAnswer,
       answers,
       openText,
@@ -392,6 +394,7 @@ const AppFlow = () => {
                     firstName: data.firstName,
                     lastName: data.lastName,
                     email: data.email,
+                    employmentStatus: data.employmentStatus,
                     currentJobTitle: data.jobTitle,
                     currentCountry: data.currentCountry,
                   });

@@ -1,6 +1,7 @@
 export type PathKey = "A" | "B" | "C";
 export type BadgeLevel = "talent" | "champion" | "leader" | "none";
 export type AiValidationLevel = "high" | "medium" | "low";
+export type EmploymentStatus = "employed" | "unemployed";
 
 export interface AiValidationResult {
   level: AiValidationLevel;
@@ -57,6 +58,7 @@ export interface backendResponse {
 }
 
 export interface SubmissionPayload {
+  employmentStatus: EmploymentStatus;
   path: PathKey;
   entryAnswer: string;
   answers: Record<string, { label: string; points: number }>;
