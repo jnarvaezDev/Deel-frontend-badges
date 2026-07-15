@@ -5,23 +5,23 @@ const levels = [
   {
     number: 1,
     title: "Global Talent",
-    description: "Professionals who already work or have worked with international companies.",
-    skills: ["Experience collaborating with global teams", "Participation in cross-border projects", "Work experience in international organizations"],
+    description: "Ready to work internationally.",
+    skills: ["Fluent English + cultural awareness", "Remote-capable, cross-timezone experience", "No international work experience yet"],
     borderColor: "#5938b7",
   },
 
   {
     number: 2,
     title: "Global Champion",
-    description: "Professionals with extensive experience operating in global environments.",
-    skills: ["All global talent skills AND", "Experience building international teams or systems", "Participation in building global operations", "Advanced experience working across multiple regions"],
+    description: "2+ years working internationally.",
+    skills: ["All Global Talent skills AND", "Direct cross-border project experience", "Navigated global operations and compliance"],
     borderColor: "#ed5e2a",
   },
   {
     number: 3,
     title: "Global Leader",
-    description: "Professionals who regularly collaborate across countries, cultures, or time zones.",
-    skills: ["All global champion skills AND", "Coordination with international teams", "Responsibility in distributed projects", "Frequent collaboration across borders"],
+    description: "Designs and leads multicultural global teams.",
+    skills: ["All global champion skills AND", "Strategic multi-market responsibility", "Builds culture and systems across regions"],
     borderColor: "#a88ee8",
   },
 ];
@@ -48,12 +48,12 @@ const LevelsSection = () => {
               />
               <p className="text-sm font-semibold text-muted-foreground">Level {level.number}</p>
               <h3 className="text-[20px] leading-[28px] font-bold text-foreground mt-2">{level.title}</h3>
-              <p className="text-sm leading-5 text-muted-foreground mt-3">{level.description}</p>
+              <p className="text-base leading-6 text-muted-foreground mt-3">{level.description}</p>
               <div className="mt-4">
-                <p className="text-sm font-semibold text-foreground mb-2">Typical skills:</p>
+                <p className="text-base leading-6 font-semibold text-foreground mb-2">Typical profile:</p>
                 <ul className="space-y-1">
                   {level.skills.map((skill, i) => (
-                    <li key={i} className="text-sm leading-5 text-muted-foreground flex items-start gap-2">
+                    <li key={i} className="text-base leading-6 text-muted-foreground flex items-start gap-2">
                       <span className="mt-1.5 w-1 h-1 rounded-full bg-muted-foreground flex-shrink-0" />
                       {skill}
                     </li>
