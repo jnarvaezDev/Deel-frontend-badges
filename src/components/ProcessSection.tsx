@@ -1,5 +1,7 @@
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import mockupImage from "@/assets/card-licences.png";
+import brazilMockupImage from "@/assets/Perfil-certificacion.png";
+import { getStoredBrazilBranding } from "@/lib/branding";
 
 const steps = [
   "Register on the landing page",
@@ -11,6 +13,8 @@ const steps = [
 
 const ProcessSection = () => {
   const section = useScrollReveal();
+  const brazilBranding = getStoredBrazilBranding();
+  const imageSrc = brazilBranding ? brazilMockupImage : mockupImage;
 
   return (
     <section className="section-spacing">
@@ -22,7 +26,7 @@ const ProcessSection = () => {
           {/* Image left */}
           <div className="flex-1 flex justify-center">
             <img
-              src={mockupImage}
+              src={imageSrc}
               alt="LinkedIn badge preview"
               className="w-full max-w-[400px] rounded-[20px]"
               style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.12)' }}

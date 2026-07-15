@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import heroImage from "@/assets/gif-licences.png";
+import heroImage from "@/assets/hero-image.gif";
+import brazilHeroImage from "@/assets/Hero-Image-pt.gif";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { getStoredBrazilBranding } from "@/lib/branding";
 
@@ -7,6 +8,7 @@ const HeroSection = () => {
   const left = useScrollReveal();
   const right = useScrollReveal();
   const brazilBranding = getStoredBrazilBranding();
+  const imageSrc = brazilBranding ? brazilHeroImage : heroImage;
 
   const handleScroll = () => {
   const section = document.getElementById("certification-levels");
@@ -58,7 +60,7 @@ const HeroSection = () => {
             style={{ transitionDelay: '0.2s' }}
           >
             <div className="relative w-[95%] h-full rounded-[20px] overflow-hidden ml-auto min-h-[400px]">
-              <img src={heroImage} alt="Professional with Global Champion badge" className="w-full h-full object-cover" />
+              <img src={imageSrc} alt="Professional with Global Champion badge" className="w-full h-full object-cover" />
             </div>
           </div>
         </div>
