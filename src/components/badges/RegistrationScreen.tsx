@@ -12,7 +12,7 @@ import { ArrowRight, User, Mail, Briefcase, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { isBlockedPublicEmail, requiresProfessionalEmail } from "@/lib/badges/email";
 import { countries } from "@/lib/badges/countries";
-import type { EmploymentStatus } from "@/lib/badges/types";
+import { UNEMPLOYED_JOB_TITLE_FALLBACK, type EmploymentStatus } from "@/lib/badges/types";
 
 export interface RegistrationData {
   firstName: string;
@@ -39,6 +39,7 @@ export function RegistrationScreen({ onContinue }: RegistrationScreenProps) {
     currentCountry: "",
   });
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const isUnemployed = form.employmentStatus === "unemployed";
 
   const errors = {
     firstName: !form.firstName.trim() ? "First name is required" : "",
@@ -52,7 +53,7 @@ export function RegistrationScreen({ onContinue }: RegistrationScreenProps) {
       : requiresProfessionalEmail(form.employmentStatus) && isBlockedPublicEmail(form.email)
       ? "Please enter your professional email (personal domains are not allowed)"
       : "",
-    jobTitle: !form.jobTitle.trim() ? "Job title is required" : "",
+    jobTitle: !isUnemployed && !form.jobTitle.trim() ? "Job title is required" : "",
     currentCountry: !form.currentCountry.trim()
       ? "Current country is required"
       : "",
@@ -63,15 +64,34 @@ export function RegistrationScreen({ onContinue }: RegistrationScreenProps) {
   const handleBlur = (field: string) =>
     setTouched((prev) => ({ ...prev, [field]: true }));
 
-  const handleChange = (field: keyof RegistrationData, value: string) =>
-    setForm((prev) => ({ ...prev, [field]: value }));
+  const handleChange = (field: keyof RegistrationData, value: string) => {
+    setForm((prev) => {
+      if (field === "employmentStatus") {
+        return {
+          ...prev,
+          employmentStatus: value as EmploymentStatus,
+          jobTitle:
+            value === "unemployed"
+              ? UNEMPLOYED_JOB_TITLE_FALLBACK
+              : prev.jobTitle === UNEMPLOYED_JOB_TITLE_FALLBACK
+              ? ""
+              : prev.jobTitle,
+        };
+      }
+
+      return { ...prev, [field]: value };
+    });
+  };
 
   const handleSubmit = () => {
     if (!isValid) {
       setTouched({ firstName: true, lastName: true, email: true, employmentStatus: true, jobTitle: true, currentCountry: true });
       return;
     }
-    onContinue(form);
+    onContinue({
+      ...form,
+      jobTitle: isUnemployed ? UNEMPLOYED_JOB_TITLE_FALLBACK : form.jobTitle,
+    });
   };
 
   const fields: {
@@ -93,7 +113,17 @@ export function RegistrationScreen({ onContinue }: RegistrationScreenProps) {
       type: "email",
       icon: Mail,
     },
-    { key: "jobTitle", label: "Current Job Title", placeholder: "Head of Global Operations", type: "text", icon: Briefcase },
+    ...(!isUnemployed
+      ? [
+          {
+            key: "jobTitle" as const,
+            label: "Current Job Title",
+            placeholder: "Head of Global Operations",
+            type: "text",
+            icon: Briefcase,
+          },
+        ]
+      : []),
   ];
 
   return (

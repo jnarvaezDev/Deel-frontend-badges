@@ -3,6 +3,8 @@ export type BadgeLevel = "talent" | "champion" | "leader" | "none";
 export type AiValidationLevel = "high" | "medium" | "low";
 export type EmploymentStatus = "employed" | "unemployed";
 
+export const UNEMPLOYED_JOB_TITLE_FALLBACK = "Not applicable";
+
 export interface AiValidationResult {
   level: AiValidationLevel;
   scoreModifier: number;

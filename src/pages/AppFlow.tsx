@@ -16,7 +16,7 @@ import { ENTRY_QUESTION, getQuestionsForPath } from "@/lib/badges/questions";
 import { scoreForPath, scoreForPathWithAdjustedScore } from "@/lib/badges/scoring";
 import { submitToWebhook, validateOpenText } from "@/lib/badges/webhook";
 import { captureLead } from "@/lib/badges/leads";
-import type { BadgeLevel, Intent, PathKey, ScoringResult, backendResponse } from "@/lib/badges/types";
+import { UNEMPLOYED_JOB_TITLE_FALLBACK, type BadgeLevel, type Intent, type PathKey, type ScoringResult, type backendResponse } from "@/lib/badges/types";
 import { toast } from "sonner";
 import { getStoredBrazilBranding, isBrazilCountry, USER_COUNTRY_STORAGE_KEY } from "@/lib/branding";
 import "./../badge-theme.css";
@@ -54,6 +54,11 @@ const ACCENT_BG = {
 
 const NOMAD_BRANDING_BG = "bg-black";
 const API_URL = import.meta.env.VITE_API_URL ?? "";
+
+const getRegistrationJobTitle = (registration: RegistrationData | null) =>
+  registration?.employmentStatus === "unemployed"
+    ? UNEMPLOYED_JOB_TITLE_FALLBACK
+    : registration?.jobTitle ?? "";
 
 const AppFlow = () => {
   const isMobile = useIsMobile();
@@ -286,14 +291,16 @@ const AppFlow = () => {
         rawResult.reroutedFrom,
     };
 
+    const registrationJobTitle = getRegistrationJobTitle(registration);
+
     const payload = {
       firstName: registration?.firstName ?? "",
       lastName: registration?.lastName ?? "",
       email: registration?.email ?? "",
       employmentStatus: registration?.employmentStatus ?? "employed",
-      currentJobTitle: registration?.jobTitle ?? "",
+      currentJobTitle: registrationJobTitle,
       currentCountry: registration?.currentCountry ?? "",
-      jobTitle: registration?.jobTitle ?? "",
+      jobTitle: registrationJobTitle,
       badge: finalScoring.badge,
       maxScore: finalScoring.maxScore,
       reason: finalScoring.reason,
@@ -395,7 +402,10 @@ const AppFlow = () => {
                     lastName: data.lastName,
                     email: data.email,
                     employmentStatus: data.employmentStatus,
-                    currentJobTitle: data.jobTitle,
+                    currentJobTitle:
+                      data.employmentStatus === "unemployed"
+                        ? UNEMPLOYED_JOB_TITLE_FALLBACK
+                        : data.jobTitle,
                     currentCountry: data.currentCountry,
                   });
 
